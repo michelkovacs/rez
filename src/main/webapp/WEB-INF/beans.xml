@@ -1,5 +1,0 @@
-<beans>
-	<interceptors>
-		<class>com.mk.bandas.tx.GerenciadorDeTransacao</class>
-	</interceptors>
-</beans>
