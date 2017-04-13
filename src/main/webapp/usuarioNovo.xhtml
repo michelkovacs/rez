@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+	<ui:composition template="_template.xhtml">
+
+		<ui:define name="titulo">
+				<p:outputPanel>Novo usuário</p:outputPanel>
+		</ui:define>
+
+		<ui:define name="conteudo">
+		
+			<p:messages id="msgLocal" escape="false" showDetail="true" autoUpdate="true" closable="true" />
+		
+			<h:form id="login">
+				<p:fieldset legend="Dados para acesso">
+					<h:panelGrid columns="3">
+
+						<p:outputLabel value="Email:" for="email" />
+						<p:inputText id="email" value="#{loginBean.usuario.email}" validatorMessage="email invalido" required="true">
+    						 <f:validateRegex pattern="[\w\.-]*[a-zA-Z0-9_]@[\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]" />
+						</p:inputText>
+						<p:message for="email" id="messageEmail" />
+						
+						<p:outputLabel value="Senha:" for="senha" />
+						<p:password id="senha" value="#{loginBean.usuario.senhaDigitada}" match="confirmaSenha" 
+							goodLabel="segurança razoável" strongLabel="senha forte" weakLabel="senha fraca" 
+							promptLabel="digite sua senha"	
+							feedback="true"  required="true" redisplay="true">
+							  	<f:validateLength minimum="6" maximum="20" />
+      							<f:validator validatorId="passwordValidator" />
+      					</p:password>
+						<p:message for="senha" id="messageSenha" />
+						
+						<p:outputLabel value="Confirme a senha:" for="confirmaSenha" />
+						<p:password id="confirmaSenha" value="#{loginBean.usuario.senhaDigitada}" validatorMessage="senhas devem ser iguais" 
+							goodLabel="segurança razoável" strongLabel="senha forte" weakLabel="senha fraca" 
+							promptLabel="confirme sua senha"
+							feedback="true"  required="true" redisplay="true"/>
+						<p:message for="senha" id="messageConfirmaSenha" />
+
+						<p:commandButton value="Registrar" action="#{loginBean.incluir}" update="@form" process="@form" />
+					</h:panelGrid>
+				</p:fieldset>
+			</h:form>
+		</ui:define>
+
+	</ui:composition>
+
+</html>
