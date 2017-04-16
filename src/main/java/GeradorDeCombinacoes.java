@@ -3,18 +3,24 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
 
 import javax.persistence.EntityManager;
 
+import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.apache.commons.math3.util.CombinatoricsUtils;
 import org.paukov.combinatorics.Factory;
 import org.paukov.combinatorics.Generator;
 import org.paukov.combinatorics.ICombinatoricsVector;
 
+import com.google.common.base.Strings;
+import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.Table;
 import com.mk.bandas.dao.FaixaVariavelDao;
 import com.mk.bandas.dao.JPAUtil;
 import com.mk.bandas.dao.SolucaoDao;
@@ -22,6 +28,9 @@ import com.mk.bandas.dao.ZonaDao;
 import com.mk.bandas.model.Solucao;
 
 import calculadora.CalculadoraFuncObjetivo;
+import calculadora.CalculadoraVariavelCrEleit;
+import calculadora.CalculadoraVariavelEleat;
+import calculadora.CalculadoraVariavelMov;
 import calculadora.MatrizValidacaoHelper;
 import calculadora.ParamsCalculadora;
 
@@ -235,52 +244,81 @@ public class GeradorDeCombinacoes {
         System.out.println("tempo total de processamento: " + DurationFormatUtils.formatDuration(estimatedTime, "HH:mm:ss", true));
         //System.out.println("duracao 1 operacao (ms): " + tempoEstimadoPorUnidade);
         
-        System.out.println("\n50 SOLUCOES MELHORES CLASSIFICADAS");
+        System.out.println("\n100 SOLUCOES MELHORES CLASSIFICADAS");
         System.out.println("----------------------------------");
         //listando primeiros colocados na tela
-        List<Solucao> solucoes = solucaoDao.listarPrimeirosColocados(idExperimento, 50);
+        List<Solucao> solucoes = solucaoDao.listarPrimeirosColocados(idExperimento, 100);
         printSolucoes(solucoes);
-       	salvarCSV(solucoes);
+       	salvarCSV(solucoes, calculadoraFuncObjetivo);
         
         //rollback
         em.getTransaction().rollback();
 
 	}
 
-	private static void salvarCSV(List<Solucao> solucoes) {
+	private static void salvarCSV(List<Solucao> solucoes, CalculadoraFuncObjetivo calculadora) {
 		int classificacao = 1;
 		String conteudo = "";
+		int larguraMatriz = 0;
 		MatrizValidacaoHelper matrizValidacaoHelper = new MatrizValidacaoHelper();
-		
+		Table<Integer, String, Float> tabelaDetalhes = HashBasedTable.create();
+
+		/// TODO: falta exibir no cabecalho as zonas e as vizinhas
+		conteudo = "data/hora simulação:," + DateFormatUtils.format(Calendar.getInstance(), "dd/MM/YYYY HH:mm:ss") + "\n" +
+				"max zonas em agrupamento:, " + calculadora.getParamsCalculadora().getMaxZonasEmAgrupamento() + "\n" +
+				"peso eleat:," + calculadora.getParamsCalculadora().getPesoVariavelEleit() + "\n" +
+				"peso creleit:," + calculadora.getParamsCalculadora().getPesoVariavelCrEleit() + "\n" +
+				"peso mov:," + calculadora.getParamsCalculadora().getPesoVariavelMov() + "\n\n";
+				
 		for (Solucao solucao : solucoes) {
-			
 			String matriz[][] = matrizValidacaoHelper.criarMatriz(solucao.getTextoSolucao(), 3);
+			larguraMatriz = matriz[0].length;
 			
-			conteudo = conteudo + "Solucao," + classificacao + ",Pontuacao Funcao Objetivo," + solucao.getValorFuncObjetivo() +"\n";
-					
-			conteudo = conteudo + 		
-					"agrupamentos,,,soma eleitorado,soma eleitorado 2021, EleAt parcial, CrEleit parcial, Mov parcial" + "\n";
+			//linha 1 da solucao, com classificacao da solucao e pontuacao da func. objetivo
+			conteudo = conteudo + "Solução," + classificacao + ",Pontuação Função Objetivo," + solucao.getValorFuncObjetivo() +"\n";
+			//cabecalho de cada solucao
+			conteudo = conteudo + 	"Agrupamentos" + Strings.repeat(",", larguraMatriz) + "Soma Eleitorado,Soma Eleitorado 2021,Soma Movimentações,EleAt,CrEleit,Mov" + "\n";
+
+			try {
+				calculadora.calcular(solucao.getTextoSolucao(), tabelaDetalhes);
+			} catch (Exception e) {
+				System.out.println("erro ao gerar csv");
+				e.printStackTrace();
+				return;
+			}
 			for (int i = 0; i < matriz.length; i++) {
 				for (int j=0; j< matriz[i].length; j++) {
-					conteudo = conteudo + matriz[i][j] + ',';
+					if (NumberUtils.isDigits(matriz[i][j])) {
+						conteudo = conteudo + matriz[i][j];
+					}
+					conteudo = conteudo + ",";
 				}
+				//para cada agrupamento exibir o valor parcial das variaveis e os somatorios dos valores (eleitores, movimentacoes, etc)
+				conteudo = conteudo +
+						 	tabelaDetalhes.row(i).get(CalculadoraVariavelEleat.NOME_COLUNA_SOMA) + "," +
+						 	tabelaDetalhes.row(i).get(CalculadoraVariavelCrEleit.NOME_COLUNA_SOMA) + "," +
+						 	tabelaDetalhes.row(i).get(CalculadoraVariavelMov.NOME_COLUNA_SOMA) + "," +
+						 	tabelaDetalhes.row(i).get(CalculadoraVariavelEleat.NOME_VARIAVEL) + "," +
+							tabelaDetalhes.row(i).get(CalculadoraVariavelCrEleit.NOME_VARIAVEL) + "," +
+							tabelaDetalhes.row(i).get(CalculadoraVariavelMov.NOME_VARIAVEL);
+						
 				conteudo = conteudo + "\n";				
 			}
-				conteudo = conteudo + "EleAt,50 CrEleit,40 Mov,30" + "\n";
+
 			conteudo = conteudo + "\n";
 						
 			classificacao++;
 		}
 		
-		String nomeArquivo = "rezon" + System.currentTimeMillis() + ".csv";
+		String nomeArquivo = "rezon-" + DateFormatUtils.format(Calendar.getInstance(), "YYYY-MM-dd--HH-mm-ss") + ".csv";
 		final File file = new File(nomeArquivo); 
 		try {
 			org.apache.commons.io.FileUtils.writeStringToFile(file, conteudo, "UTF-8");
 		} catch (IOException e) {
-			System.out.println("erro ao gravar arquivo CSV de detalhes: " + e.getMessage());
+			System.out.println("\nerro ao gravar arquivo CSV de detalhes: " + e.getMessage());
 			e.printStackTrace();
 		}
-		System.out.println("Arquivo CSV detalhado gerado: " + nomeArquivo);
+		System.out.println("\n\nArquivo CSV detalhado gerado: " + nomeArquivo);
 		
 	}
 

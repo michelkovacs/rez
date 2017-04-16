@@ -175,7 +175,7 @@ public class MatrizValidacaoHelper {
 				novaAltura = i;
 				break;
 			}
-			novaAltura = i;
+			novaAltura = i+1;
 		}
 		
 		String[][] matrizReduzida = new String[novaAltura][novaLargura];

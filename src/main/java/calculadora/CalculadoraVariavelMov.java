@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.math.NumberUtils;
 
+import com.google.common.collect.Table;
 import com.mk.bandas.dao.FaixaVariavelDao;
 import com.mk.bandas.dao.ZonaDao;
 import com.mk.bandas.model.FaixaVariavel;
@@ -15,7 +16,8 @@ public class CalculadoraVariavelMov {
 	private Integer qtdeFusoes;
 	private ZonaDao zonaDao;
 	private FaixaVariavelDao faixaVariavelDao;
-	private final String NOME_VARIAVEL = "mov";
+	public static final String NOME_VARIAVEL = "mov";
+	public final static String NOME_COLUNA_SOMA = "soma movimentacoes";
 	private Integer maxZonasEmAgrupamento; 
 
 	public CalculadoraVariavelMov(ParamsCalculadora params) {
@@ -27,6 +29,10 @@ public class CalculadoraVariavelMov {
 	}
 
 	public Float calcular(String solucao) throws Exception {
+		return calcular(solucao, null);
+	}
+	
+	public Float calcular(String solucao, Table<Integer, String, Float> tabelaDetalhes) throws Exception {
 		Float somaParciais = 0F;
 		String[][] matriz = this.matrizHelper.criarMatriz(solucao, this.maxZonasEmAgrupamento);
 		//this.printMatrix(matriz);
@@ -40,22 +46,29 @@ public class CalculadoraVariavelMov {
 				
 			}
 			if (listaZonasNaLinhaDaMatriz.size() > 0) {
-				somaParciais = somaParciais + this.calcularParcial(listaZonasNaLinhaDaMatriz);
+				somaParciais = somaParciais + this.calcularParcial(listaZonasNaLinhaDaMatriz, tabelaDetalhes, i);
 			}
 		}
 		//return somaParciais / qtdeFusoes;
 		return somaParciais / matriz.length; //dividindo pelo numero de agrupamentos
 	}
 
-	private Float calcularParcial(List<Integer> listaZonasNaLinhaDaMatriz) throws Exception {
+	private Float calcularParcial(List<Integer> listaZonasNaLinhaDaMatriz, Table<Integer, String, Float> tabelaDetalhes, int numLinhaMatriz) throws Exception {
 		Float somaMovimentacoes = 0F;
+		Float pontuacao = 0F;
 		for (int i = 0; i < listaZonasNaLinhaDaMatriz.size(); i++) {
 			Integer numZona = listaZonasNaLinhaDaMatriz.get(i);
 			Zona zona =  zonaDao.buscar(numZona);
 			somaMovimentacoes = somaMovimentacoes + zona.getMovimentacao();
 		}
-		FaixaVariavel faixa = this.faixaVariavelDao.buscar(NOME_VARIAVEL, somaMovimentacoes);;
-		return faixa.getPontuacao();		
+		FaixaVariavel faixa = this.faixaVariavelDao.buscar(NOME_VARIAVEL, somaMovimentacoes);
+		
+		pontuacao = faixa.getPontuacao();
+		if (tabelaDetalhes != null) {
+			tabelaDetalhes.put(numLinhaMatriz, NOME_VARIAVEL, pontuacao);
+			tabelaDetalhes.put(numLinhaMatriz, NOME_COLUNA_SOMA, somaMovimentacoes);
+		}
+		return pontuacao;
 	}
 	
 	public void printMatrix(String[][] m){

@@ -41,10 +41,10 @@ public class MatrizValidacaoTest {
 		MatrizValidacaoHelper matrizHelper = new MatrizValidacaoHelper();
 		String[][] m = matrizHelper.criarMatriz(combinacoes, qtdeFusoes);
 		/*matriz resultante esperada
-		 *  | 1 | 2 | - |
-      		| 3 | 4 | - |
-      		| 5 | 6 | - |
-      		| 7 | 8 | - |
+		 *  | 1 | 2 | 
+      		| 3 | 4 | 
+      		| 5 | 6 | 
+      		| 7 | 8 | 
 		 */
 		r[0][0] = "1";
 		r[0][1] = "2";
@@ -102,6 +102,47 @@ public class MatrizValidacaoTest {
 		Assert.assertTrue(assertMatrixEquals(r, m));
 	}
 	
+	
+	
+	@Test
+	public void montarMatrizCom5ElementosEmUmaLinha() {
+		int maxZonasEmAgrupamento = 5;
+		String[][] r = new String[2][5];
+		String solucao = "|(1)-(2)|,|(2)-(3)|,|(3)-(4)|,|(4)-(5)|,|(9)-(10)|,|(10)-(11)|";
+		MatrizValidacaoHelper matrizHelper = new MatrizValidacaoHelper();
+		String[][] m = matrizHelper.criarMatriz(solucao, maxZonasEmAgrupamento);
+		/*matriz resultante esperada
+		 *  | 1  | 2  | 3 | 4 | 5 |
+		    | 10 | 11 | - | - | - |  
+		 */
+		r[0][0] = "1";
+		r[0][1] = "2";
+		r[0][2] = "3";
+		r[0][3] = "4";
+		r[0][4] = "5";
+		r[1][0] = "10";
+		r[1][1] = "11";
+	
+		Assert.assertTrue(assertMatrixEquals(r, m));
+	}
+	
+	@Test
+	public void montarMatrizComApenasDuasZonasEmUmaLinha() {
+		int maxZonasEmAgrupamento = 2;
+		String[][] r = new String[1][2];
+		String solucao = "|(1001)-(1002)|";
+		MatrizValidacaoHelper matrizHelper = new MatrizValidacaoHelper();
+		String[][] m = matrizHelper.criarMatriz(solucao, maxZonasEmAgrupamento);
+		/*matriz resultante esperada
+		 *  | 1001 | 1002 | 
+		 */
+		r[0][0] = "1001";
+		r[0][1] = "1002";
+		
+		Assert.assertTrue(assertMatrixEquals(r, m));
+	}
+	
+	
 	private boolean testaCombinacao(int qtdeFusoes, int maxZonasEmFusao, String combinacoes) {
 		boolean resultado;
 		MatrizValidacaoHelper matrizHelper = new MatrizValidacaoHelper();
@@ -115,7 +156,6 @@ public class MatrizValidacaoTest {
 	
 	@Test
 	public void testeMassaInvalidos() {
-	
 		Assert.assertFalse("1", this.testaCombinacao(4, 3, "|(3)-(6)|,|(5)-(6)|,|(5)-(8)|,|(7)-(8)|"));
 		Assert.assertFalse("2", this.testaCombinacao(6, 3, "|(5)-(8)|,|(6)-(10)|,|(7)-(10)|,|(8)-(12)|,|(9)-(11)|,|(11)-(12)|"));
 		Assert.assertFalse("3", this.testaCombinacao(7, 3, "|(3)-(6)|,|(5)-(8)|,|(7)-(10)|,|(8)-(11)|,|(9)-(11)|,|(12)-(13)|,|(12)-(14)|"));
@@ -123,18 +163,14 @@ public class MatrizValidacaoTest {
 	
 	@Test	
 	public void testeMassaValidos() {
-		
-		Assert.assertTrue("1", this.testaCombinacao(4, 3, "|(1)-(3)|,|(2)-(4)|,|(2)-(6)|,|(5)-(8)|"));
+		Assert.assertTrue("0", this.testaCombinacao(4, 3, "|(1)-(3)|,|(2)-(4)|,|(2)-(6)|,|(5)-(8)|"));
 		Assert.assertTrue("1", this.testaCombinacao(8, 3, "|(1)-(2)|,|(3)-(4)|,|(5)-(8)|,|(6)-(10)|,|(7)-(9)|,|(8)-(11)|,|(13)-(14)|,|(16)-(12)|"));
 		Assert.assertTrue("2", this.testaCombinacao(7, 3, "|(3)-(6)|,|(5)-(8)|,|(7)-(10)|,|(8)-(11)|,|(9)-(10)|,|(12)-(13)|,|(12)-(14)|"));
-		
 		Assert.assertTrue("3", this.testaCombinacao(4, 3, "|(1)-(2)|,|(3)-(4)|,|(5)-(6)|,|(7)-(8)|"));
-		
 		Assert.assertTrue("4", this.testaCombinacao(4, 3, "|(1)-(2)|,|(2)-(3)|,|(5)-(6)|,|(7)-(8)|"));
 		Assert.assertTrue("5", this.testaCombinacao(5, 3, "|(1)-(2)|,|(3)-(4)|,|(5)-(6)|,|(7)-(8)|,|(9)-(10)|"));
 		Assert.assertTrue("6", this.testaCombinacao(6, 3, "|(1)-(2)|,|(3)-(4)|,|(5)-(6)|,|(7)-(8)|,|(9)-(10)|,|(11)-(12)|"));
 		Assert.assertTrue("7", this.testaCombinacao(9, 3, "|(1)-(2)|,|(2)-(6)|,|(3)-(4)|,|(7)-(8)|,|(9)-(10)|,|(11)-(13)|,|(15)-(12)|,|(18)-(19)|,|(20)-(19)|"));   
-		
 	}
 	
 	public void printMatrix(String[][] m){

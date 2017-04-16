@@ -1,3 +1,5 @@
+import java.util.Map;
+
 import javax.persistence.EntityManager;
 
 import org.junit.After;
@@ -5,6 +7,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.Table;
 import com.mk.bandas.dao.FaixaVariavelDao;
 import com.mk.bandas.dao.JPAUtil;
 import com.mk.bandas.dao.ZonaDao;
@@ -12,6 +16,8 @@ import com.mk.bandas.model.FaixaVariavel;
 import com.mk.bandas.model.Zona;
 
 import calculadora.CalculadoraFuncObjetivo;
+import calculadora.CalculadoraVariavelCrEleit;
+import calculadora.CalculadoraVariavelEleat;
 import calculadora.ParamsCalculadora;
 
 public class CalculadoraFuncaoObjetivoTest {
@@ -27,6 +33,7 @@ public class CalculadoraFuncaoObjetivoTest {
 	}
 	
 	private void carregarTabelasBasicasParaTestes() {
+		faixaVariavelDao.incluir(new FaixaVariavel("mov", 0F, 999999F, 1F));
 		faixaVariavelDao.incluir(new FaixaVariavel("eleat", 0F, 2F, 0.2F));
 		faixaVariavelDao.incluir(new FaixaVariavel("eleat", 3F, 4F, 0.4F));
 		faixaVariavelDao.incluir(new FaixaVariavel("eleat", 5F, 6F, 0.6F));
@@ -89,6 +96,41 @@ public class CalculadoraFuncaoObjetivoTest {
 	}
 	
 	@Test
+	public void verificaTabelaDeDetalhesDoCalculo() throws Exception {
+		String solucao = "|(1001)-(1002)|";
+		Integer qtdeFusoes = 1;
+		Integer maxZonasEmAgrupamento = 3;
+		float somaEleitoresFuturosEsperado = 2.0f;
+		float creleitEsperado = 0.4f;
+		float somaEleitoresAtuaisEsperado = 3.0f;
+		float eleatEsperado = 0.4f;
+		
+		ParamsCalculadora params = new ParamsCalculadora();
+		params.setFaixaVariavelDao(faixaVariavelDao);
+		params.setZonaDao(zonaDao);
+		params.setMaxZonasEmAgrupamento(maxZonasEmAgrupamento);
+		params.setQtdeFusoes(qtdeFusoes);
+		params.setPesoVariavelCrEleit(1f);
+		params.setPesoVariavelEleit(1f);
+		
+		CalculadoraFuncObjetivo calculadora = new CalculadoraFuncObjetivo(params);
+		Table<Integer, String, Float> tabelaDetalhes = HashBasedTable.create();
+		Float valor = calculadora.calcular(solucao, tabelaDetalhes);
+		
+		/*for (int i = 0; i < tabelaDetalhes.rowKeySet().size(); i++) {
+			Map<String, Float> map = tabelaDetalhes.row(i);
+			System.out.println("linha " + i + " creleit: " + map.get("creleit").floatValue());
+			System.out.println("linha " + i + " soma creleit: " + map.get("soma eleitores futuros").floatValue());
+			
+		}*/
+		
+		Assert.assertEquals(creleitEsperado,  tabelaDetalhes.row(0).get(CalculadoraVariavelCrEleit.NOME_VARIAVEL).floatValue(), 0.00001f);
+		Assert.assertEquals(somaEleitoresFuturosEsperado,  tabelaDetalhes.row(0).get(CalculadoraVariavelCrEleit.NOME_COLUNA_SOMA).floatValue(), 0.00001f);
+		Assert.assertEquals(eleatEsperado,  tabelaDetalhes.row(0).get(CalculadoraVariavelEleat.NOME_VARIAVEL).floatValue(), 0.00001f);
+		Assert.assertEquals(somaEleitoresAtuaisEsperado,  tabelaDetalhes.row(0).get(CalculadoraVariavelEleat.NOME_COLUNA_SOMA).floatValue(), 0.00001f);
+	}
+	
+	@Test
 	public void calcularComEleatDePeso2() throws Exception {
 		
 		String solucao = "|(1001)-(1002)|";
@@ -110,5 +152,25 @@ public class CalculadoraFuncaoObjetivoTest {
 		Assert.assertEquals(valorEsperado, valor, 0.0001);
 	}
 	
+	@Test
+	public void testTabelaGuava() {
+		Table<Integer, String, Float> tabelaDetalhes = HashBasedTable.create();
+		tabelaDetalhes.put(1, "creleit", 120f);
+		tabelaDetalhes.put(1, "eleat", 100f);
+		tabelaDetalhes.put(1, "soma eleitores", 5000f);
+		tabelaDetalhes.put(1, "soma eleitores fut", 5700f);
+		tabelaDetalhes.put(2, "creleit", 220f);
+		tabelaDetalhes.put(2, "eleat", 200f);
+		tabelaDetalhes.put(2, "soma eleitores", 6000f);
+		tabelaDetalhes.put(2, "soma eleitores fut", 6700f);
+		
+		for (int i = 0; i < tabelaDetalhes.rowKeySet().size(); i++) {
+			Map<String,Float> map = tabelaDetalhes.row(i);
+			System.out.println("linha " + i + " eleat: " + map.get("eleat").floatValue());
+			System.out.println("linha " + i + " soma eleitores: " + map.get("soma eleitores").floatValue());
+			
+		}
+					
+	}
 	
 }

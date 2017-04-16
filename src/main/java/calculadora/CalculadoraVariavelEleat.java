@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.math.NumberUtils;
 
+import com.google.common.collect.Table;
 import com.mk.bandas.dao.FaixaVariavelDao;
 import com.mk.bandas.dao.ZonaDao;
 import com.mk.bandas.model.FaixaVariavel;
@@ -15,7 +16,8 @@ public class CalculadoraVariavelEleat {
 	private Integer qtdeFusoes;
 	private ZonaDao zonaDao;
 	private FaixaVariavelDao faixaVariavelDao;
-	private final String NOME_VARIAVEL = "eleat";
+	public static final String NOME_VARIAVEL = "eleat";
+	public final static String NOME_COLUNA_SOMA = "soma eleitores atuais";
 	private Integer maxZonasEmAgrupamento; 
 
 	public CalculadoraVariavelEleat(ParamsCalculadora params) {
@@ -25,8 +27,13 @@ public class CalculadoraVariavelEleat {
 		this.faixaVariavelDao = params.getFaixaVariavelDao();
 		
 	}
-
+	
 	public Float calcular(String solucao) throws Exception {
+		return calcular(solucao, null);
+	}
+	
+	public Float calcular(String solucao, Table<Integer, String, Float> tabelaDetalhes) throws Exception {
+	
 		Float somaParciais = 0F;
 		String[][] matriz = this.matrizHelper.criarMatriz(solucao, this.maxZonasEmAgrupamento);
 		//this.printMatrix(matriz);
@@ -40,22 +47,29 @@ public class CalculadoraVariavelEleat {
 				
 			}
 			if (listaZonasNaLinhaDaMatriz.size() > 0) {
-				somaParciais = somaParciais + this.calcularParcial(listaZonasNaLinhaDaMatriz);
+				somaParciais = somaParciais + this.calcularParcial(listaZonasNaLinhaDaMatriz, tabelaDetalhes, i);
 			}
 		}
 		//return somaParciais / qtdeFusoes;
 		return somaParciais / matriz.length; //dividindo pelo numero de agrupamentos
 	}
 
-	private Float calcularParcial(List<Integer> listaZonasNaLinhaDaMatriz) throws Exception {
+	private Float calcularParcial(List<Integer> listaZonasNaLinhaDaMatriz, Table<Integer, String, Float> tabelaDetalhes, int numLinhaMatriz) throws Exception {
 		Float somaEleitores = 0F;
+		Float pontuacao = 0F;
 		for (int i = 0; i < listaZonasNaLinhaDaMatriz.size(); i++) {
 			Integer numZona = listaZonasNaLinhaDaMatriz.get(i);
 			Zona zona =  zonaDao.buscar(numZona);
 			somaEleitores = somaEleitores + zona.getEleitoradoAtual();
 		}
 		FaixaVariavel faixa = this.faixaVariavelDao.buscar(NOME_VARIAVEL, somaEleitores);;
-		return faixa.getPontuacao();		
+		
+		pontuacao = faixa.getPontuacao();
+		if (tabelaDetalhes != null) {
+			tabelaDetalhes.put(numLinhaMatriz, NOME_VARIAVEL, pontuacao);
+			tabelaDetalhes.put(numLinhaMatriz, NOME_COLUNA_SOMA, somaEleitores);
+		}
+		return pontuacao;		
 	}
 	
 	public void printMatrix(String[][] m){

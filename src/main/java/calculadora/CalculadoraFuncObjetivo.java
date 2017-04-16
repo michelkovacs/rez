@@ -1,13 +1,5 @@
 package calculadora;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.commons.lang3.math.NumberUtils;
-
-import com.mk.bandas.dao.FaixaVariavelDao;
-import com.mk.bandas.dao.ZonaDao;
-import com.mk.bandas.model.FaixaVariavel;
-import com.mk.bandas.model.Zona;
+import com.google.common.collect.Table;
 
 public class CalculadoraFuncObjetivo {
 
@@ -23,19 +15,27 @@ public class CalculadoraFuncObjetivo {
 		this.calculadoraVariavelMov = new CalculadoraVariavelMov(paramsCalculadora);
 	}
 
+	public ParamsCalculadora getParamsCalculadora() {
+		return paramsCalculadora;
+	}
+	
 	public Float calcular(String solucao) throws Exception {
+		return this.calcular(solucao, null);
+		
+	}
+	public Float calcular(String solucao, Table<Integer, String, Float> tabelaDetalhes) throws Exception {
 		Float valor = 0f;
 		
 		if (this.paramsCalculadora.getPesoVariavelEleit() > 0) {
-			valor = valor + (this.paramsCalculadora.getPesoVariavelEleit() * this.calculadoraVariavelEleit.calcular(solucao));
+			valor = valor + (this.paramsCalculadora.getPesoVariavelEleit() * this.calculadoraVariavelEleit.calcular(solucao, tabelaDetalhes));
 		}
 		
 		if (this.paramsCalculadora.getPesoVariavelCrEleit() > 0) {
-			valor = valor + (this.paramsCalculadora.getPesoVariavelCrEleit() * this.calculadoraVariavelCrEleit.calcular(solucao));
+			valor = valor + (this.paramsCalculadora.getPesoVariavelCrEleit() * this.calculadoraVariavelCrEleit.calcular(solucao, tabelaDetalhes));
 		}
 		
 		if (this.paramsCalculadora.getPesoVariavelMov() > 0) {
-			valor = valor + (this.paramsCalculadora.getPesoVariavelMov() * this.calculadoraVariavelCrEleit.calcular(solucao));
+			valor = valor + (this.paramsCalculadora.getPesoVariavelMov() * this.calculadoraVariavelMov.calcular(solucao, tabelaDetalhes));
 		}
 		return valor;
 	}
