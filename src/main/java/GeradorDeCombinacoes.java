@@ -60,6 +60,7 @@ public class GeradorDeCombinacoes {
 		double percCorteTempoPelasEliminacoes = 0.1;
 		double tempoParaGerarEArmazenarCadaCombinacao = 8; //10ms
 		double tempoParaCalcularFuncaoObjetivoDeCadaCombinacao = 150; //150ms
+		String textoSolucaoParaCalcularPontuacao;
 		
 		/**** inicializando EntityManager, daos e calculadora *********/
 		EntityManager em = new JPAUtil().getEntityManager();
@@ -97,7 +98,7 @@ public class GeradorDeCombinacoes {
 				paramsCalculadora.setPesoVariavelCrEleit(1f);
 				paramsCalculadora.setPesoVariavelMov(1f);
 			}
-			if (opcaoSelecionada == 2) {
+			if ((opcaoSelecionada == 2) || (opcaoSelecionada == 3)) {
 				System.out.print("\nDigite o peso da variavel EleAt (Numero de eleitores atuais): ");
 				pesoEleAt = scanner.nextFloat();
 				paramsCalculadora.setPesoVariavelEleit(pesoEleAt);
@@ -108,6 +109,20 @@ public class GeradorDeCombinacoes {
 				System.out.print("\nDigite o peso da variavel Mov (Numero de movimentacoes RAE e ASE): ");
 				pesoMov = scanner.nextFloat();
 				paramsCalculadora.setPesoVariavelMov(pesoMov);
+			}
+			
+			if (opcaoSelecionada == 3) {
+				System.out.print("\nDigite o texto da solucao como no exemplo: |(24)-(124)|,|(24)-(236)|,|(230)-(231)|,|(232)-(233)|,|(233)-(234)|  : ");
+				textoSolucaoParaCalcularPontuacao = scanner.next();
+				
+				Float pontuacaoSolucaoDigitada = calculadoraFuncObjetivo.calcular(textoSolucaoParaCalcularPontuacao);
+				System.out.print("\nPontuação da solução digitada: " + pontuacaoSolucaoDigitada);
+				
+				salvarCSVSolucaoDigitada(textoSolucaoParaCalcularPontuacao, calculadoraFuncObjetivo);
+				
+				System.out.print("\n\nFazer nova simulacao? (S/N)");
+				fazerSimulacao = scanner.next().toUpperCase();
+				continue;
 			}
 			
 			System.out.print("\nNumero de zonas da regiao: ");
@@ -256,6 +271,74 @@ public class GeradorDeCombinacoes {
 
 	}
 
+	private static void salvarCSVSolucaoDigitada(String textoSolucaoParaCalcularPontuacao, CalculadoraFuncObjetivo calculadora) throws Exception {
+		int classificacao = 0;
+		String conteudo = "";
+		int larguraMatriz = 0;
+		MatrizValidacaoHelper matrizValidacaoHelper = new MatrizValidacaoHelper();
+		Table<Integer, String, Float> tabelaDetalhes = HashBasedTable.create();
+
+		/// TODO: falta exibir no cabecalho as zonas e as vizinhas
+		conteudo = "data/hora simulação:," + DateFormatUtils.format(Calendar.getInstance(), "dd/MM/YYYY HH:mm:ss") + "\n" +
+				"max zonas em agrupamento:, " + calculadora.getParamsCalculadora().getMaxZonasEmAgrupamento() + "\n" +
+				"peso eleat:," + calculadora.getParamsCalculadora().getPesoVariavelEleit() + "\n" +
+				"peso creleit:," + calculadora.getParamsCalculadora().getPesoVariavelCrEleit() + "\n" +
+				"peso mov:," + calculadora.getParamsCalculadora().getPesoVariavelMov() + "\n\n";
+				
+		Solucao solucao = new Solucao();
+		solucao.setTextoSolucao(textoSolucaoParaCalcularPontuacao);
+		solucao.setValorFuncObjetivo(calculadora.calcular(textoSolucaoParaCalcularPontuacao));
+
+		
+		String matriz[][] = matrizValidacaoHelper.criarMatriz(solucao.getTextoSolucao(), 3);
+		larguraMatriz = matriz[0].length;
+
+		// linha 1 da solucao, com classificacao da solucao e pontuacao da func.
+		// objetivo
+		conteudo = conteudo + "Solução," + classificacao + ",Pontuação Função Objetivo,"
+				+ solucao.getValorFuncObjetivo() + "\n";
+		// cabecalho de cada solucao
+		conteudo = conteudo + "Agrupamentos" + Strings.repeat(",", larguraMatriz)
+				+ "Soma Eleitorado,Soma Eleitorado 2021,Soma Movimentações,EleAt,CrEleit,Mov" + "\n";
+
+		try {
+			calculadora.calcular(solucao.getTextoSolucao(), tabelaDetalhes);
+		} catch (Exception e) {
+			System.out.println("erro ao gerar csv");
+			e.printStackTrace();
+			return;
+		}
+		for (int i = 0; i < matriz.length; i++) {
+			for (int j = 0; j < matriz[i].length; j++) {
+				if (NumberUtils.isDigits(matriz[i][j])) {
+					conteudo = conteudo + matriz[i][j];
+				}
+				conteudo = conteudo + ",";
+			}
+			// para cada agrupamento exibir o valor parcial das variaveis e os
+			// somatorios dos valores (eleitores, movimentacoes, etc)
+			conteudo = conteudo + tabelaDetalhes.row(i).get(CalculadoraVariavelEleat.NOME_COLUNA_SOMA) + ","
+					+ tabelaDetalhes.row(i).get(CalculadoraVariavelCrEleit.NOME_COLUNA_SOMA) + ","
+					+ tabelaDetalhes.row(i).get(CalculadoraVariavelMov.NOME_COLUNA_SOMA) + ","
+					+ tabelaDetalhes.row(i).get(CalculadoraVariavelEleat.NOME_VARIAVEL) + ","
+					+ tabelaDetalhes.row(i).get(CalculadoraVariavelCrEleit.NOME_VARIAVEL) + ","
+					+ tabelaDetalhes.row(i).get(CalculadoraVariavelMov.NOME_VARIAVEL);
+
+			conteudo = conteudo + "\n";
+		}
+
+		conteudo = conteudo + "\n";
+	
+		String nomeArquivo = "rezon-" + DateFormatUtils.format(Calendar.getInstance(), "YYYY-MM-dd--HH-mm-ss") + ".csv";
+		final File file = new File(nomeArquivo); 
+		try {
+			org.apache.commons.io.FileUtils.writeStringToFile(file, conteudo, "UTF-8");
+		} catch (IOException e) {
+			System.out.println("\nerro ao gravar arquivo CSV de detalhes: " + e.getMessage());
+			e.printStackTrace();
+		}
+		System.out.println("\n\nArquivo CSV detalhado gerado: " + nomeArquivo);	
+	}
 	private static void salvarCSV(List<Solucao> solucoes, CalculadoraFuncObjetivo calculadora) {
 		int classificacao = 1;
 		String conteudo = "";
