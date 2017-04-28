@@ -15,12 +15,12 @@ public class Solucao implements Serializable {
 	private static final long serialVersionUID = -2128816238599390897L;
 	@Id
 	@GeneratedValue
-	private Long id;
-	private Long idExperimento;
-	private Float valorFuncObjetivo;
-	private Long numeroPasso;	
+	protected Long id;
+	protected Long idExperimento;
+	protected Float valorFuncObjetivo;
+	protected Long numeroPasso;	
 	@Column(nullable = false, columnDefinition = "TEXT")
-	private String textoSolucao;
+	protected String textoSolucao;
 	public Long getId() {
 		return id;
 	}

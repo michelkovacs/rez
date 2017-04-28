@@ -5,6 +5,7 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Scanner;
 
@@ -26,6 +27,7 @@ import com.mk.bandas.dao.JPAUtil;
 import com.mk.bandas.dao.SolucaoDao;
 import com.mk.bandas.dao.ZonaDao;
 import com.mk.bandas.model.Solucao;
+import com.mk.bandas.model.SolucaoUnica;
 
 import calculadora.CalculadoraFuncObjetivo;
 import calculadora.CalculadoraVariavelCrEleit;
@@ -55,11 +57,7 @@ public class GeradorDeCombinacoes {
 		Float pesoEleAt = 0f;
 		Float pesoCrEleit = 0f;
 		Float pesoMov = 0f;
-		long resultado = 0L;
 		int maxZonasEmAgrupamento = 3;
-		double percCorteTempoPelasEliminacoes = 0.1;
-		double tempoParaGerarEArmazenarCadaCombinacao = 8; //10ms
-		double tempoParaCalcularFuncaoObjetivoDeCadaCombinacao = 150; //150ms
 		String textoSolucaoParaCalcularPontuacao;
 		
 		/**** inicializando EntityManager, daos e calculadora *********/
@@ -255,7 +253,6 @@ public class GeradorDeCombinacoes {
 		System.out.println("COMBINACOES VALIDAS = " + (qtdeCombinacoes-contInvalidos));
 		
 		long estimatedTime = System.currentTimeMillis() - startTime;
-		long tempoEstimadoPorUnidade = estimatedTime / qtdeCombinacoes;
         System.out.println("tempo total de processamento: " + DurationFormatUtils.formatDuration(estimatedTime, "HH:mm:ss", true));
         //System.out.println("duracao 1 operacao (ms): " + tempoEstimadoPorUnidade);
         
@@ -265,7 +262,20 @@ public class GeradorDeCombinacoes {
         List<Solucao> solucoes = solucaoDao.listarPrimeirosColocados(idExperimento, 100);
         printSolucoes(solucoes);
        	salvarCSV(solucoes, calculadoraFuncObjetivo);
-        
+       	
+       	//listando apenas solucoes unicas
+       	LinkedHashSet<SolucaoUnica> solucoesUnicasSet = new LinkedHashSet<SolucaoUnica>();
+       	for (Solucao solucao: solucoes) {
+       		solucoesUnicasSet.add(new SolucaoUnica(solucao, maxZonasEmAgrupamento));
+		}
+       	
+       	List<Solucao> solucoesUnicasList = new ArrayList<Solucao>();
+       	for (SolucaoUnica unica: solucoesUnicasSet) {
+       		solucoesUnicasList.add(unica.getSolucao());
+		}
+       	  	       	
+       	salvarCSV(solucoesUnicasList, calculadoraFuncObjetivo);
+       	        
         //rollback
         em.getTransaction().rollback();
 
@@ -310,7 +320,7 @@ public class GeradorDeCombinacoes {
 		}
 		for (int i = 0; i < matriz.length; i++) {
 			for (int j = 0; j < matriz[i].length; j++) {
-				if (NumberUtils.isDigits(matriz[i][j])) {
+				if (NumberUtils.isDigits(matriz[i][j])) { // para nao exibir nulls
 					conteudo = conteudo + matriz[i][j];
 				}
 				conteudo = conteudo + ",";
@@ -347,7 +357,7 @@ public class GeradorDeCombinacoes {
 		Table<Integer, String, Float> tabelaDetalhes = HashBasedTable.create();
 
 		/// TODO: falta exibir no cabecalho as zonas e as vizinhas
-		conteudo = "data/hora simulação:," + DateFormatUtils.format(Calendar.getInstance(), "dd/MM/YYYY HH:mm:ss") + "\n" +
+		conteudo = "data/hora simulacao:," + DateFormatUtils.format(Calendar.getInstance(), "dd/MM/YYYY HH:mm:ss") + "\n" +
 				"max zonas em agrupamento:, " + calculadora.getParamsCalculadora().getMaxZonasEmAgrupamento() + "\n" +
 				"peso eleat:," + calculadora.getParamsCalculadora().getPesoVariavelEleit() + "\n" +
 				"peso creleit:," + calculadora.getParamsCalculadora().getPesoVariavelCrEleit() + "\n" +
@@ -358,9 +368,9 @@ public class GeradorDeCombinacoes {
 			larguraMatriz = matriz[0].length;
 			
 			//linha 1 da solucao, com classificacao da solucao e pontuacao da func. objetivo
-			conteudo = conteudo + "Solução," + classificacao + ",Pontuação Função Objetivo," + solucao.getValorFuncObjetivo() +"\n";
+			conteudo = conteudo + "Solucao," + classificacao + ",Pontuacao Funcao Objetivo," + solucao.getValorFuncObjetivo() +"\n";
 			//cabecalho de cada solucao
-			conteudo = conteudo + 	"Agrupamentos" + Strings.repeat(",", larguraMatriz) + "Soma Eleitorado,Soma Eleitorado 2021,Soma Movimentações,EleAt,CrEleit,Mov" + "\n";
+			conteudo = conteudo + 	"Agrupamentos" + Strings.repeat(",", larguraMatriz) + "Soma Eleitorado,Soma Eleitorado 2021,Soma Movimentacoes,EleAt,CrEleit,Mov" + "\n";
 
 			try {
 				calculadora.calcular(solucao.getTextoSolucao(), tabelaDetalhes);
