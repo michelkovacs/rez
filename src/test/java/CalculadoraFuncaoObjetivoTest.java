@@ -18,6 +18,7 @@ import com.mk.bandas.model.Zona;
 import calculadora.CalculadoraFuncObjetivo;
 import calculadora.CalculadoraVariavelCrEleit;
 import calculadora.CalculadoraVariavelEleat;
+import calculadora.CalculadoraVariavelMov;
 import calculadora.ParamsCalculadora;
 
 public class CalculadoraFuncaoObjetivoTest {
@@ -56,9 +57,9 @@ public class CalculadoraFuncaoObjetivoTest {
 		faixaVariavelDao.incluir(new FaixaVariavel("creleit", 10F, 99999999F, 0.1F));
 		
 		
-		zonaDao.incluir(new Zona(1001, "", -1f, -1f, 1, 1, 0));
-		zonaDao.incluir(new Zona(1002, "", -1f, -1f, 2, 1, 0));
-		zonaDao.incluir(new Zona(1003, "", -1f, -1f, 3, 1, 0));
+		zonaDao.incluir(new Zona(1001, "", -1f, -1f, 1, 1, 10));
+		zonaDao.incluir(new Zona(1002, "", -1f, -1f, 2, 1, 11));
+		zonaDao.incluir(new Zona(1003, "", -1f, -1f, 3, 4, 12));
 		zonaDao.incluir(new Zona(1004, "", -1f, -1f, 4, 1, 0));
 		zonaDao.incluir(new Zona(1005, "", -1f, -1f, 5, 1, 0));
 		zonaDao.incluir(new Zona(1006, "", -1f, -1f, 6, 1, 0));
@@ -129,6 +130,40 @@ public class CalculadoraFuncaoObjetivoTest {
 		Assert.assertEquals(eleatEsperado,  tabelaDetalhes.row(0).get(CalculadoraVariavelEleat.NOME_VARIAVEL).floatValue(), 0.00001f);
 		Assert.assertEquals(somaEleitoresAtuaisEsperado,  tabelaDetalhes.row(0).get(CalculadoraVariavelEleat.NOME_COLUNA_SOMA).floatValue(), 0.00001f);
 	}
+	
+	@Test
+	public void verificaTabelaDeDetalhesDoCalculoComZonaSemAgrupamento() throws Exception {
+		//setup
+		String solucao = "|(1001)-(1002)|";
+		String[] vetorZonas = new String[] {"(1001)", "(1002)", "(1003)"};//a zona 1003 deve aparecer isolada em um agrupamento
+		Integer qtdeFusoes = 1;
+		Integer maxZonasEmAgrupamento = 3;
+		float somaEleitoresFuturosEsperado = 4.0f;
+		float somaEleitoresAtuaisEsperado = 3.0f;
+		float somaMovimentacoesEsperado = 12.0f;
+		
+		ParamsCalculadora params = new ParamsCalculadora();
+		params.setFaixaVariavelDao(faixaVariavelDao);
+		params.setZonaDao(zonaDao);
+		params.setMaxZonasEmAgrupamento(maxZonasEmAgrupamento);
+		params.setQtdeFusoes(qtdeFusoes);
+		params.setPesoVariavelCrEleit(1f);
+		params.setPesoVariavelEleit(1f);
+		params.setVetorZonas(vetorZonas);
+		CalculadoraFuncObjetivo calculadora = new CalculadoraFuncObjetivo(params);
+		Table<Integer, String, Float> tabelaDetalhes = HashBasedTable.create();
+		
+		//execucao
+		Float valor = calculadora.calcular(solucao, tabelaDetalhes);
+		
+		//validacao
+		//verificar se o somatorio da zona que ficou em um agrupamento sozinha na segunda linha, tem 
+		//os somatorios iguais ao propria quantidade da zona de eleitorado, movimentacoes, etc.
+		Assert.assertEquals(somaEleitoresAtuaisEsperado,  tabelaDetalhes.row(1).get(CalculadoraVariavelEleat.NOME_COLUNA_SOMA).floatValue(), 0.00001f);
+		Assert.assertEquals(somaEleitoresFuturosEsperado,  tabelaDetalhes.row(1).get(CalculadoraVariavelCrEleit.NOME_COLUNA_SOMA).floatValue(), 0.00001f);
+		Assert.assertEquals(somaMovimentacoesEsperado,  tabelaDetalhes.row(1).get(CalculadoraVariavelMov.NOME_COLUNA_SOMA).floatValue(), 0.00001f);
+	}
+	
 	
 	@Test
 	public void calcularComEleatDePeso2() throws Exception {

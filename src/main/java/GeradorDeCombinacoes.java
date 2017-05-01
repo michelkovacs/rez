@@ -67,9 +67,9 @@ public class GeradorDeCombinacoes {
 		ParamsCalculadora paramsCalculadora = new ParamsCalculadora();
 		paramsCalculadora.setFaixaVariavelDao(faixaVariavelDao);
 		paramsCalculadora.setZonaDao(zonaDao);
-		
 		paramsCalculadora.setQtdeFusoes(qtdeDeFusoes);
 		paramsCalculadora.setMaxZonasEmAgrupamento(maxZonasEmAgrupamento);
+		
 		CalculadoraFuncObjetivo calculadoraFuncObjetivo = new CalculadoraFuncObjetivo(paramsCalculadora);
 
 		String fazerSimulacao = "S";
@@ -186,6 +186,7 @@ public class GeradorDeCombinacoes {
 		
 		vetorZonas = lerZonas(scanner);
 		vetorVizinhosAux = lerVizinhos(scanner);
+		calculadoraFuncObjetivo.getParamsCalculadora().setVetorZonas(vetorZonas);
 				
 		System.out.println("Executando...");
 		
@@ -256,10 +257,10 @@ public class GeradorDeCombinacoes {
         System.out.println("tempo total de processamento: " + DurationFormatUtils.formatDuration(estimatedTime, "HH:mm:ss", true));
         //System.out.println("duracao 1 operacao (ms): " + tempoEstimadoPorUnidade);
         
-        System.out.println("\n100 SOLUCOES MELHORES CLASSIFICADAS");
+        System.out.println("\n500 SOLUCOES MELHORES CLASSIFICADAS");
         System.out.println("----------------------------------");
         //listando primeiros colocados na tela
-        List<Solucao> solucoes = solucaoDao.listarPrimeirosColocados(idExperimento, 100);
+        List<Solucao> solucoes = solucaoDao.listarPrimeirosColocados(idExperimento, 500);
         printSolucoes(solucoes);
        	salvarCSV(solucoes, calculadoraFuncObjetivo);
        	
@@ -300,7 +301,7 @@ public class GeradorDeCombinacoes {
 		solucao.setValorFuncObjetivo(calculadora.calcular(textoSolucaoParaCalcularPontuacao));
 
 		
-		String matriz[][] = matrizValidacaoHelper.criarMatriz(solucao.getTextoSolucao(), 3);
+		String matriz[][] = matrizValidacaoHelper.criarMatriz(solucao.getTextoSolucao(), calculadora.getParamsCalculadora().getMaxZonasEmAgrupamento(), calculadora.getParamsCalculadora().getVetorZonas());
 		larguraMatriz = matriz[0].length;
 
 		// linha 1 da solucao, com classificacao da solucao e pontuacao da func.
@@ -364,7 +365,7 @@ public class GeradorDeCombinacoes {
 				"peso mov:," + calculadora.getParamsCalculadora().getPesoVariavelMov() + "\n\n";
 				
 		for (Solucao solucao : solucoes) {
-			String matriz[][] = matrizValidacaoHelper.criarMatriz(solucao.getTextoSolucao(), 3);
+			String matriz[][] = matrizValidacaoHelper.criarMatriz(solucao.getTextoSolucao(), calculadora.getParamsCalculadora().getMaxZonasEmAgrupamento(), calculadora.getParamsCalculadora().getVetorZonas());
 			larguraMatriz = matriz[0].length;
 			
 			//linha 1 da solucao, com classificacao da solucao e pontuacao da func. objetivo

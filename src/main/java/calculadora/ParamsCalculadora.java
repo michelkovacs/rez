@@ -12,6 +12,7 @@ public class ParamsCalculadora {
 	private int qtdeFusoes;
 	private FaixaVariavelDao faixaVariavelDao;
 	private ZonaDao zonaDao;
+	private String[] vetorZonas;
 	
 	public int getMaxZonasEmAgrupamento() {
 		return maxZonasEmAgrupamento;
@@ -64,4 +65,11 @@ public class ParamsCalculadora {
 		this.zonaDao = zonaDao;
 	}
 	
+	public String[] getVetorZonas() {
+		return vetorZonas;
+	}
+	
+	public void setVetorZonas(String[] vetorZonas) {
+		this.vetorZonas = vetorZonas;
+	}	
 }

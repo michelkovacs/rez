@@ -16,40 +16,12 @@ public class MatrizValidacaoHelper {
 	public static final String CHAR_INICIO_ZONA = "(";
 	public static final String CHAR_FIM_ZONA = ")";
 	public static final String CHAR_FUSAO_ZONAS = "-";
-	
-	public void validacaoSimples(String textoCombinacoes, int maximoDeZonasEmFusao) {
 		
-	}
-	
-	public String geraString(String[][] m) {
-		String saida = "";
-		try {
-			int rows = m.length;
-			int columns = m[0].length;
-			String str = "|\t";
-
-			for (int i = 0; i < rows; i++) {
-				for (int j = 0; j < columns; j++) {
-					saida += m[i][j] + "\t";
-				}
-
-				saida = saida + "|";
-				saida = saida + "|\t";
-			}
-
-		} catch (Exception e) {
-			System.out.println("Matrix is empty!!");
-		}
-
-		 return saida;
-	}
-	
-	public String[][] criarMatriz(String combinacoes, int qtdeMaximaDeFusoes) {
-
-		combinacoes = combinacoes.replace(CHAR_ENVOLVE_COMBINACAO, "");
-		String[] arrayCombinacoes = combinacoes.split(DELIMITADOR_COMBINACOES);
+	public String[][] criarMatriz(String textoSolucao, int qtdeMaximaDeFusoes, String[] vetorZonas) {
+		textoSolucao = textoSolucao.replace(CHAR_ENVOLVE_COMBINACAO, "");
+		String[] arrayCombinacoes = textoSolucao.split(DELIMITADOR_COMBINACOES);
 		int largura = arrayCombinacoes.length*qtdeMaximaDeFusoes;
-		int altura = arrayCombinacoes.length;
+		int altura = arrayCombinacoes.length*2;
 		
 		//inicio com largura bem grande, para caber todos
 		//em uma linha se for necessario
@@ -58,7 +30,6 @@ public class MatrizValidacaoHelper {
 		
 		/*******fazendo o parse da string passada para um vetor de duas colunas com todos os pares**********/
 		String[][] pares = new String[altura][2];
-		int larguraFinal= 2;
 		for (int i = 0; i < arrayCombinacoes.length; i++) {
 			String[] par = new String[2];
 			par = arrayCombinacoes[i].split(CHAR_FUSAO_ZONAS);
@@ -88,6 +59,7 @@ public class MatrizValidacaoHelper {
 			 */
 			String zonaA = pares[i][0];
 			String zonaB = pares[i][1];
+			if (zonaA == null) continue;
 			if (! aoMenosUmaZonaEstaNaMatriz(zonaA, zonaB, mapaEnderecos)) {
 				//nenhuma das duas na matriz
 				//colocar em uma nova linha
@@ -132,15 +104,41 @@ public class MatrizValidacaoHelper {
 					maiorColuna = colunaOndeEncaixou;
 					
 			}
-
 		}
+		
+		//percorrendo a lista de zonas disponiveis
+		//se alguma zona da lista nao estiver na matriz, significa que ela nao se agrupou com
+		//nenhum outra, mas deve ser incluida na matriz, para sua pontuacao isolada ser calculada
+		if (vetorZonas != null) {
+			for (int i = 0; i < vetorZonas.length; i++) {
+				String zona = vetorZonas[i].replace(CHAR_INICIO_ZONA, "").replace(CHAR_FIM_ZONA, "");
 
-		String[][] matrizResumida = reduzColunasMatriz(matrizValidacao, maiorColuna+1);
-		// initialize elements
+				if (!zonaEstaNaMatriz(zona, mapaEnderecos)) {
+					//colocar em uma nova linha
+					++ultimaLinhaUtilizada;
+					inserirUmaZonaEmNovaLinhaNaMatriz(zona, matrizValidacao, ultimaLinhaUtilizada);
+					EnderecoNaMatriz enderecoNaMatrizA = new EnderecoNaMatriz();
+					enderecoNaMatrizA.linha = ultimaLinhaUtilizada;
+					enderecoNaMatrizA.coluna = 0;
+					enderecoNaMatrizA.elemento = zona;
+					mapaEnderecos.put(zona, enderecoNaMatrizA);
+				}
+			}
+		}
+		
+		String[][] matrizResumida = reduzMatriz(matrizValidacao, maiorColuna+1);
 
 		return matrizResumida;
 	}
 
+	public String[][] criarMatriz(String textoSolucao, int qtdeMaximaDeFusoes) {
+		return this.criarMatriz(textoSolucao, qtdeMaximaDeFusoes, null);
+		
+	}
+	
+	private boolean zonaEstaNaMatriz(String zona, String[][] matrizValidacao) {
+		return false;
+	}
 
 	private int insereZonaNaLinha(String zona, int linha, String[][] matrizValidacao) {
 		//insere zona na primeira coluna livre na linha passada
@@ -150,14 +148,16 @@ public class MatrizValidacaoHelper {
 				return coluna;
 			}
 		}
-		
 		return 0;
-		
 	}
 
 	private void inserirEmNovaLinhaNaMatriz(String zonaA, String zonaB, String[][] matrizValidacao, int ultimaLinhaUtilizada) {
 		matrizValidacao[ultimaLinhaUtilizada][0] = zonaA;
 		matrizValidacao[ultimaLinhaUtilizada][1] = zonaB;		
+	}
+	
+	private void inserirUmaZonaEmNovaLinhaNaMatriz(String zona, String[][] matrizValidacao, int ultimaLinhaUtilizada) {
+		matrizValidacao[ultimaLinhaUtilizada][0] = zona;
 	}
 
 	private boolean aoMenosUmaZonaEstaNaMatriz(String zonaA, String zonaB, HashMap<String, EnderecoNaMatriz> mapaEnderecos) {
@@ -166,8 +166,18 @@ public class MatrizValidacaoHelper {
 		else
 			return false;
 	}
+	
+	private boolean zonaEstaNaMatriz(String zona, HashMap<String, EnderecoNaMatriz> mapaEnderecos) {
+		if (mapaEnderecos.containsKey(zona)) {
+			return true;
+		}
+		else {
+			return false;
+		}
+			
+	}
 
-	private String[][] reduzColunasMatriz(String[][] matrizOriginal, int novaLargura) {
+	private String[][] reduzMatriz(String[][] matrizOriginal, int novaLargura) {
 		//para eliminar linhas que ficaram com somente valores null, encontro o primeiro valor null na coluna zero, para definir a altura da matriz
 		int novaAltura = 0;
 		for (int i = 0; i < matrizOriginal.length; i++) {
@@ -185,7 +195,6 @@ public class MatrizValidacaoHelper {
 			}
 		}
 		return matrizReduzida;
-		
 	}
 
 	public boolean validarCombinacoes(String combinacoes, int qtdeDeFusoes, int maximoDeZonasEmFusao) {

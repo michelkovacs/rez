@@ -18,14 +18,15 @@ public class CalculadoraVariavelMov {
 	private FaixaVariavelDao faixaVariavelDao;
 	public static final String NOME_VARIAVEL = "mov";
 	public final static String NOME_COLUNA_SOMA = "soma movimentacoes";
-	private Integer maxZonasEmAgrupamento; 
+	private Integer maxZonasEmAgrupamento;
+	private ParamsCalculadora paramsCalculadora;
 
 	public CalculadoraVariavelMov(ParamsCalculadora params) {
 		this.qtdeFusoes = params.getQtdeFusoes();
 		this.maxZonasEmAgrupamento = params.getMaxZonasEmAgrupamento();
 		this.zonaDao = params.getZonaDao();
 		this.faixaVariavelDao = params.getFaixaVariavelDao();
-		
+		this.paramsCalculadora = params;
 	}
 
 	public Float calcular(String solucao) throws Exception {
@@ -34,7 +35,7 @@ public class CalculadoraVariavelMov {
 	
 	public Float calcular(String solucao, Table<Integer, String, Float> tabelaDetalhes) throws Exception {
 		Float somaParciais = 0F;
-		String[][] matriz = this.matrizHelper.criarMatriz(solucao, this.maxZonasEmAgrupamento);
+		String[][] matriz = this.matrizHelper.criarMatriz(solucao, this.maxZonasEmAgrupamento, paramsCalculadora.getVetorZonas());
 		//this.printMatrix(matriz);
 		List<Integer> listaZonasNaLinhaDaMatriz = new ArrayList<Integer>();
 		for (int i = 0; i < matriz.length; i++) {
