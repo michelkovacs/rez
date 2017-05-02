@@ -42,22 +42,17 @@ import calculadora.ParamsCalculadora;
  */
 public class GeradorDeCombinacoes {
 
-	public static Long idExperimento = 7L;
-	
 	public static void main(String[] args) throws Exception {
 		//carregando dados basicos
 		CarregadorDadosBasicosUtil.carregarDadosBasicos();
-		
-		// TODO Auto-generated method stub
-		// create combinatorics vector
-		long numZonasNaRegiao = 15L;
-		int qtdeDeVizinhos = 26;
-		int qtdeDeFusoes = 7;
+		long numZonasNaRegiao = 0L;
+		int qtdeDeVizinhos = 0;
+		int qtdeDeFusoes = 0;
 		int opcaoSelecionada = 0;
 		Float pesoEleAt = 0f;
 		Float pesoCrEleit = 0f;
 		Float pesoMov = 0f;
-		int maxZonasEmAgrupamento = 3;
+		int maxZonasEmAgrupamento = 0;
 		String textoSolucaoParaCalcularPontuacao;
 		
 		/**** inicializando EntityManager, daos e calculadora *********/
@@ -67,22 +62,18 @@ public class GeradorDeCombinacoes {
 		ParamsCalculadora paramsCalculadora = new ParamsCalculadora();
 		paramsCalculadora.setFaixaVariavelDao(faixaVariavelDao);
 		paramsCalculadora.setZonaDao(zonaDao);
-		paramsCalculadora.setQtdeFusoes(qtdeDeFusoes);
-		paramsCalculadora.setMaxZonasEmAgrupamento(maxZonasEmAgrupamento);
 		
 		CalculadoraFuncObjetivo calculadoraFuncObjetivo = new CalculadoraFuncObjetivo(paramsCalculadora);
 
 		String fazerSimulacao = "S";
 		
-		
-		
 		while (fazerSimulacao.equals("S")) {
 		
 			Scanner scanner = new Scanner(System.in);
 			
-			System.out.print(	"----------------------\n" +
-								"SIMULADOR REZONEAMENTO\n" +
-								"----------------------\n\n" +
+			System.out.print(	"-----------------------------\n" +
+								"TRE-RJ SIMULADOR REZONEAMENTO\n" +
+								"-----------------------------\n\n" +
 								"ESCOLHA UMA OPCAO:\n\n" +
 								"1 - GERAR SOLUCOES COM FUNCAO OBJETIVO PADRAO: FObj = 1EleAt + 1CrEleit + 1Mov\n" +
 								"2 - GERAR SOLUCOES AJUSTANDO PESOS DA FUNCAO OBJETIVO\n" +
@@ -110,64 +101,56 @@ public class GeradorDeCombinacoes {
 			}
 			
 			if (opcaoSelecionada == 3) {
+				String[] vetorZonas = lerZonas(scanner);
+				calculadoraFuncObjetivo.getParamsCalculadora().setVetorZonas(vetorZonas);
+				
 				System.out.print("\nDigite o texto da solucao como no exemplo: |(24)-(124)|,|(24)-(236)|,|(230)-(231)|,|(232)-(233)|,|(233)-(234)|  : ");
 				textoSolucaoParaCalcularPontuacao = scanner.next();
 				
 				Float pontuacaoSolucaoDigitada = calculadoraFuncObjetivo.calcular(textoSolucaoParaCalcularPontuacao);
-				System.out.print("\nPontuação da solução digitada: " + pontuacaoSolucaoDigitada);
+				System.out.println("\nPontuação da solução digitada: " + pontuacaoSolucaoDigitada);
 				
 				salvarCSVSolucaoDigitada(textoSolucaoParaCalcularPontuacao, calculadoraFuncObjetivo);
-				
-				System.out.print("\n\nFazer nova simulacao? (S/N)");
-				fazerSimulacao = scanner.next().toUpperCase();
-				continue;
 			}
-			
-			System.out.print("\nNumero de zonas da regiao: ");
-			numZonasNaRegiao = scanner.nextInt();
+			else {
+				System.out.print("\nNumero de zonas da regiao: ");
+				numZonasNaRegiao = scanner.nextInt();
 
-			System.out.print("\nQuantidade de zonas que sao vizinhas nesta regiao: ");
-			qtdeDeVizinhos = scanner.nextInt();
+				System.out.print("\nQuantidade de zonas que sao vizinhas nesta regiao: ");
+				qtdeDeVizinhos = scanner.nextInt();
 
-			System.out.print("\nQuantidade de fusoes desejadas: ");
-			qtdeDeFusoes = scanner.nextInt();
-			
-			System.out.print("\nRestricao - numero maximo de zonas em um agrupamento: ");
-			maxZonasEmAgrupamento = scanner.nextInt();
-						
-			System.out.print("\nCalculando...");
+				System.out.print("\nQuantidade de fusoes desejadas: ");
+				qtdeDeFusoes = scanner.nextInt();
 
-			// calcular combinacoes possiveis
-			// n! / ((p!)*(n-p)!)
-			// n=numero de vizinhos
-			// p = numero de fusoes
-			int n = qtdeDeVizinhos;
-			double nFatorial = CombinatoricsUtils.factorialDouble(n);
-			int p = qtdeDeFusoes;
-			double pFatorial = CombinatoricsUtils.factorialDouble(p);
+				System.out.print("\nRestricao - numero maximo de zonas em um agrupamento: ");
+				maxZonasEmAgrupamento = scanner.nextInt();
 
-			double combinacoesPossiveis = nFatorial / ((pFatorial) * CombinatoricsUtils.factorialDouble(n - p));
+				paramsCalculadora.setQtdeFusoes(qtdeDeFusoes);
+				paramsCalculadora.setMaxZonasEmAgrupamento(maxZonasEmAgrupamento);
+				
+				System.out.print("\nCalculando...");
 
-			NumberFormat formatter = new DecimalFormat("#0");
-			System.out.println("\nNumero de combinacoes a serem processadas: = " + formatter.format(Math.ceil(combinacoesPossiveis)));
-			/*
-			NumberFormat formatoTempo = new DecimalFormat("#0.00");
-			double tempoGeracaoArmazenamento = percCorteTempoPelasEliminacoes * combinacoesPossiveis * tempoParaGerarEArmazenarCadaCombinacao;
-			System.out.println("Tempo estimado para gerar e armazenar as combinações em horas: "
-					+ DurationFormatUtils.formatDuration((long) tempoGeracaoArmazenamento, "HH:mm:ss", true));
-			double tempoCalcularFuncoesObjetivos = percCorteTempoPelasEliminacoes * combinacoesPossiveis
-					* tempoParaCalcularFuncaoObjetivoDeCadaCombinacao;
-			System.out.println("Tempo estimado para calcular funcoes objetivo em horas: "
-					+ DurationFormatUtils.formatDuration((long) tempoCalcularFuncoesObjetivos, "HH:mm:ss", true));
+				// calcular combinacoes possiveis
+				// n! / ((p!)*(n-p)!)
+				// n=numero de vizinhos
+				// p = numero de fusoes
+				int n = qtdeDeVizinhos;
+				double nFatorial = CombinatoricsUtils.factorialDouble(n);
+				int p = qtdeDeFusoes;
+				double pFatorial = CombinatoricsUtils.factorialDouble(p);
 
-			System.out.print("Simular corte por restrição de Max de Zonas em fusão para reduzir o tempo? (S/N): ");
-			String resposta = scanner.next();
-			*/
-			
-			iniciaProcessamento(em, calculadoraFuncObjetivo, numZonasNaRegiao, qtdeDeFusoes, qtdeDeVizinhos, maxZonasEmAgrupamento);
-						
-			System.out.print("\n\nFazer nova simulacao? (S/N)");
+				double combinacoesPossiveis = nFatorial / ((pFatorial) * CombinatoricsUtils.factorialDouble(n - p));
+
+				NumberFormat formatter = new DecimalFormat("#0");
+				System.out.println("\nNumero de combinacoes a serem processadas: = "
+						+ formatter.format(Math.ceil(combinacoesPossiveis)));
+				
+				iniciaProcessamento(em, calculadoraFuncObjetivo, numZonasNaRegiao, qtdeDeFusoes, qtdeDeVizinhos,
+						maxZonasEmAgrupamento);
+			}			
+			/*System.out.print("\n\nFazer nova simulacao? (S/N): ");
 			fazerSimulacao = scanner.next().toUpperCase();
+			scanner.ne*/
 		}
 		//fechando entity manager
         em.close();
@@ -222,11 +205,9 @@ public class GeradorDeCombinacoes {
 			/*****incluindo no banco ********/
 			if (invalido == false) {
 				Solucao solucao = new Solucao();
-				solucao.setIdExperimento(idExperimento);
 				solucao.setNumeroPasso(passo);
 				solucao.setTextoSolucao(textoSolucao);
 				solucao.setValorFuncObjetivo(calculadoraFuncObjetivo.calcular(textoSolucao));
-				
 				solucaoDao.incluir(solucao);
 			}
         	/*****fim inclusao no banco ********/
@@ -260,9 +241,9 @@ public class GeradorDeCombinacoes {
         System.out.println("\n500 SOLUCOES MELHORES CLASSIFICADAS");
         System.out.println("----------------------------------");
         //listando primeiros colocados na tela
-        List<Solucao> solucoes = solucaoDao.listarPrimeirosColocados(idExperimento, 500);
+        List<Solucao> solucoes = solucaoDao.listarPrimeirosColocados(500);
         printSolucoes(solucoes);
-       	salvarCSV(solucoes, calculadoraFuncObjetivo);
+       	//salvarCSV(solucoes, calculadoraFuncObjetivo);
        	
        	//listando apenas solucoes unicas
        	LinkedHashSet<SolucaoUnica> solucoesUnicasSet = new LinkedHashSet<SolucaoUnica>();
@@ -289,7 +270,6 @@ public class GeradorDeCombinacoes {
 		MatrizValidacaoHelper matrizValidacaoHelper = new MatrizValidacaoHelper();
 		Table<Integer, String, Float> tabelaDetalhes = HashBasedTable.create();
 
-		/// TODO: falta exibir no cabecalho as zonas e as vizinhas
 		conteudo = "data/hora simulação:," + DateFormatUtils.format(Calendar.getInstance(), "dd/MM/YYYY HH:mm:ss") + "\n" +
 				"max zonas em agrupamento:, " + calculadora.getParamsCalculadora().getMaxZonasEmAgrupamento() + "\n" +
 				"peso eleat:," + calculadora.getParamsCalculadora().getPesoVariavelEleit() + "\n" +
@@ -299,7 +279,6 @@ public class GeradorDeCombinacoes {
 		Solucao solucao = new Solucao();
 		solucao.setTextoSolucao(textoSolucaoParaCalcularPontuacao);
 		solucao.setValorFuncObjetivo(calculadora.calcular(textoSolucaoParaCalcularPontuacao));
-
 		
 		String matriz[][] = matrizValidacaoHelper.criarMatriz(solucao.getTextoSolucao(), calculadora.getParamsCalculadora().getMaxZonasEmAgrupamento(), calculadora.getParamsCalculadora().getVetorZonas());
 		larguraMatriz = matriz[0].length;

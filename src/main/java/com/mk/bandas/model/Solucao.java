@@ -16,7 +16,6 @@ public class Solucao implements Serializable {
 	@Id
 	@GeneratedValue
 	protected Long id;
-	protected Long idExperimento;
 	protected Float valorFuncObjetivo;
 	protected Long numeroPasso;	
 	@Column(nullable = false, columnDefinition = "TEXT")
@@ -26,12 +25,6 @@ public class Solucao implements Serializable {
 	}
 	public void setId(Long id) {
 		this.id = id;
-	}
-	public Long getIdExperimento() {
-		return idExperimento;
-	}
-	public void setIdExperimento(Long idExperimento) {
-		this.idExperimento = idExperimento;
 	}
 	public Float getValorFuncObjetivo() {
 		return valorFuncObjetivo;
@@ -56,7 +49,6 @@ public class Solucao implements Serializable {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		result = prime * result + ((idExperimento == null) ? 0 : idExperimento.hashCode());
 		result = prime * result + ((numeroPasso == null) ? 0 : numeroPasso.hashCode());
 		result = prime * result + ((textoSolucao == null) ? 0 : textoSolucao.hashCode());
 		result = prime * result + ((valorFuncObjetivo == null) ? 0 : valorFuncObjetivo.hashCode());
@@ -75,11 +67,6 @@ public class Solucao implements Serializable {
 			if (other.id != null)
 				return false;
 		} else if (!id.equals(other.id))
-			return false;
-		if (idExperimento == null) {
-			if (other.idExperimento != null)
-				return false;
-		} else if (!idExperimento.equals(other.idExperimento))
 			return false;
 		if (numeroPasso == null) {
 			if (other.numeroPasso != null)
@@ -101,7 +88,7 @@ public class Solucao implements Serializable {
 
 	@Override
 	public String toString() {
-		return "Solucao [id=" + id + ", idExperimento=" + idExperimento + ", valorFuncObjetivo=" + valorFuncObjetivo
+		return "Solucao [id=" + id + ", valorFuncObjetivo=" + valorFuncObjetivo
 				+ ", numeroPasso=" + numeroPasso + ", textoSolucao=" + textoSolucao + "]";
 	}
 	

@@ -13,17 +13,13 @@ import com.mk.bandas.model.Zona;
 public class CalculadoraVariavelEleat {
 
 	private MatrizValidacaoHelper matrizHelper = new MatrizValidacaoHelper();
-	private Integer qtdeFusoes;
 	private ZonaDao zonaDao;
 	private FaixaVariavelDao faixaVariavelDao;
 	public static final String NOME_VARIAVEL = "eleat";
 	public final static String NOME_COLUNA_SOMA = "soma eleitores atuais";
-	private Integer maxZonasEmAgrupamento; 
 	private ParamsCalculadora paramsCalculadora;
 
 	public CalculadoraVariavelEleat(ParamsCalculadora params) {
-		this.qtdeFusoes = params.getQtdeFusoes();
-		this.maxZonasEmAgrupamento = params.getMaxZonasEmAgrupamento();
 		this.zonaDao = params.getZonaDao();
 		this.faixaVariavelDao = params.getFaixaVariavelDao();
 		this.paramsCalculadora = params;
@@ -35,7 +31,7 @@ public class CalculadoraVariavelEleat {
 	
 	public Float calcular(String solucao, Table<Integer, String, Float> tabelaDetalhes) throws Exception {
 		Float somaParciais = 0F;
-		String[][] matriz = this.matrizHelper.criarMatriz(solucao, this.maxZonasEmAgrupamento, paramsCalculadora.getVetorZonas());
+		String[][] matriz = this.matrizHelper.criarMatriz(solucao, paramsCalculadora.getMaxZonasEmAgrupamento(), paramsCalculadora.getVetorZonas());
 		List<Integer> listaZonasNaLinhaDaMatriz = new ArrayList<Integer>();
 		for (int i = 0; i < matriz.length; i++) {
 			listaZonasNaLinhaDaMatriz = new ArrayList<Integer>();

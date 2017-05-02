@@ -32,15 +32,14 @@ public class SolucaoDao implements Serializable {
 		this.dao.atualiza(solucao);
 	}
 	
-	public List<Solucao> listarPrimeirosColocados(Long idExperimento, int qtdeResultados) {
+	public List<Solucao> listarPrimeirosColocados(int qtdeResultados) {
 		String jpql = "select solucao from Solucao solucao " +
-					" where solucao.idExperimento = :pIdExperimento " +
 					" order by solucao.valorFuncObjetivo DESC ";
 		
 		TypedQuery<Solucao> query = em.createQuery(jpql, Solucao.class)
 				.setFirstResult(0)
 				.setMaxResults(qtdeResultados);
-		query.setParameter("pIdExperimento", idExperimento);
+		//query.setParameter("pIdExperimento", idExperimento);
 		
 		List<Solucao> lista = query.getResultList();
 		return lista;

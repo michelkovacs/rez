@@ -24,7 +24,7 @@ VIZINHAS: (24)-(124),(24)-(230),(24)-(231),(24)-(236),(24)-(237),(123)-(178),(12
 
 
 ----------------------------------------------
-REGIAO: ZONA SULA (SEM AS 4 AGRUPADAS POR ESTAREM NO MESMO PREDIO)
+REGIAO: ZONA SUL (SEM AS 4 AGRUPADAS POR ESTAREM NO MESMO PREDIO)
 ---------------------------------------------
 QTDE ZONAS:11
 QTDE VIZINHAS: 18

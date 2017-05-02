@@ -43,7 +43,6 @@ public class SimuladorTempoNoBD {
         long qtdePassos = 1000;
         for (long passo = 1; passo <= qtdePassos; passo++) {
         	Solucao solucao = new Solucao();
-        	solucao.setIdExperimento(idExperimento);
         	solucao.setNumeroPasso(passo);
         	solucao.setTextoSolucao("teste");
         	dao.incluir(solucao);

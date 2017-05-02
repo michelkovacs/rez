@@ -14,17 +14,13 @@ import com.mk.bandas.model.Zona;
 public class CalculadoraVariavelCrEleit {
 
 	private MatrizValidacaoHelper matrizHelper = new MatrizValidacaoHelper();
-	private Integer qtdeFusoes;
 	private ZonaDao zonaDao;
 	private FaixaVariavelDao faixaVariavelDao;
 	public final static String NOME_VARIAVEL = "creleit";
 	public final static String NOME_COLUNA_SOMA = "soma eleitores futuros";
-	private Integer maxZonasEmAgrupamento; 
 	private ParamsCalculadora paramsCalculadora;
 
 	public CalculadoraVariavelCrEleit(ParamsCalculadora params) {
-		this.qtdeFusoes = params.getQtdeFusoes();
-		this.maxZonasEmAgrupamento = params.getMaxZonasEmAgrupamento();
 		this.zonaDao = params.getZonaDao();
 		this.faixaVariavelDao = params.getFaixaVariavelDao();
 		this.paramsCalculadora = params;
@@ -36,7 +32,7 @@ public class CalculadoraVariavelCrEleit {
 	
 	public Float calcular(String solucao, Table<Integer, String, Float> tabelaDetalhes) throws Exception {
 		Float somaParciais = 0F;
-		String[][] matriz = this.matrizHelper.criarMatriz(solucao, this.maxZonasEmAgrupamento, paramsCalculadora.getVetorZonas());
+		String[][] matriz = this.matrizHelper.criarMatriz(solucao, this.paramsCalculadora.getMaxZonasEmAgrupamento(), paramsCalculadora.getVetorZonas());
 		//this.printMatrix(matriz);
 		List<Integer> listaZonasNaLinhaDaMatriz = new ArrayList<Integer>();
 		for (int i = 0; i < matriz.length; i++) {
