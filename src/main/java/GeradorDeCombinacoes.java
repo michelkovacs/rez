@@ -270,7 +270,7 @@ public class GeradorDeCombinacoes {
 		MatrizValidacaoHelper matrizValidacaoHelper = new MatrizValidacaoHelper();
 		Table<Integer, String, Float> tabelaDetalhes = HashBasedTable.create();
 
-		conteudo = "data/hora simulação:," + DateFormatUtils.format(Calendar.getInstance(), "dd/MM/YYYY HH:mm:ss") + "\n" +
+		conteudo = "data/hora simulacao:," + DateFormatUtils.format(Calendar.getInstance(), "dd/MM/YYYY HH:mm:ss") + "\n" +
 				"max zonas em agrupamento:, " + calculadora.getParamsCalculadora().getMaxZonasEmAgrupamento() + "\n" +
 				"peso eleat:," + calculadora.getParamsCalculadora().getPesoVariavelEleit() + "\n" +
 				"peso creleit:," + calculadora.getParamsCalculadora().getPesoVariavelCrEleit() + "\n" +
@@ -285,11 +285,11 @@ public class GeradorDeCombinacoes {
 
 		// linha 1 da solucao, com classificacao da solucao e pontuacao da func.
 		// objetivo
-		conteudo = conteudo + "Solução," + classificacao + ",Pontuação Função Objetivo,"
+		conteudo = conteudo + "Solucao," + classificacao + ",Pontuacao Funcao Objetivo,"
 				+ solucao.getValorFuncObjetivo() + "\n";
 		// cabecalho de cada solucao
 		conteudo = conteudo + "Agrupamentos" + Strings.repeat(",", larguraMatriz)
-				+ "Soma Eleitorado,Soma Eleitorado 2021,Soma Movimentações,EleAt,CrEleit,Mov" + "\n";
+				+ "Soma Eleitorado,Soma Eleitorado 2021,Soma Movimentacoes,EleAt,CrEleit,Mov" + "\n";
 
 		try {
 			calculadora.calcular(solucao.getTextoSolucao(), tabelaDetalhes);
