@@ -108,7 +108,7 @@ public class GeradorDeCombinacoes {
 				textoSolucaoParaCalcularPontuacao = scanner.next();
 				
 				Float pontuacaoSolucaoDigitada = calculadoraFuncObjetivo.calcular(textoSolucaoParaCalcularPontuacao);
-				System.out.println("\nPontuação da solução digitada: " + pontuacaoSolucaoDigitada);
+				System.out.println("\nPontuacao da solucao digitada: " + pontuacaoSolucaoDigitada);
 				
 				salvarCSVSolucaoDigitada(textoSolucaoParaCalcularPontuacao, calculadoraFuncObjetivo);
 			}
@@ -237,12 +237,13 @@ public class GeradorDeCombinacoes {
 		long estimatedTime = System.currentTimeMillis() - startTime;
         System.out.println("tempo total de processamento: " + DurationFormatUtils.formatDuration(estimatedTime, "HH:mm:ss", true));
         //System.out.println("duracao 1 operacao (ms): " + tempoEstimadoPorUnidade);
+        System.out.println("\nGerando CSV com resultado...");
         
-        System.out.println("\n500 SOLUCOES MELHORES CLASSIFICADAS");
-        System.out.println("----------------------------------");
+        //System.out.println("\n500 SOLUCOES MELHORES CLASSIFICADAS");
+        //System.out.println("----------------------------------");
         //listando primeiros colocados na tela
         List<Solucao> solucoes = solucaoDao.listarPrimeirosColocados(500);
-        printSolucoes(solucoes);
+        //printSolucoes(solucoes);
        	//salvarCSV(solucoes, calculadoraFuncObjetivo);
        	
        	//listando apenas solucoes unicas

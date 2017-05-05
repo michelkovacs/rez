@@ -12,6 +12,77 @@ public class CarregadorDadosBasicosUtil {
 		EntityManager em = new JPAUtil().getEntityManager();
 		em.getTransaction().begin();
 		FaixaVariavelDao dao = new FaixaVariavelDao(em);
+		//carregarCapital(dao);	
+		carregarNiteroi(dao);
+		
+		em.getTransaction().commit();
+		em.close();
+	}
+
+	private static void carregarNiteroi(FaixaVariavelDao dao) {
+		dao.incluir(new FaixaVariavel("eleat", 0F, 82000F, 0.1F));
+		dao.incluir(new FaixaVariavel("eleat", 82001F, 87000F, 0.2F));
+		dao.incluir(new FaixaVariavel("eleat", 87001F, 92000F, 0.3F));
+		dao.incluir(new FaixaVariavel("eleat", 92001F, 97000F, 0.4F));
+		dao.incluir(new FaixaVariavel("eleat", 97001F, 102000F, 0.5F));
+		dao.incluir(new FaixaVariavel("eleat", 102001F, 107000F, 0.6F));
+		dao.incluir(new FaixaVariavel("eleat", 107001F, 112000F, 0.7F));
+		dao.incluir(new FaixaVariavel("eleat", 112001F, 117000F, 0.8F));
+		dao.incluir(new FaixaVariavel("eleat", 117001f, 122000f, 0.9F));
+		dao.incluir(new FaixaVariavel("eleat", 122001f, 127000F, 1F));
+		dao.incluir(new FaixaVariavel("eleat", 127001F, 132000F, 0.9F));
+		dao.incluir(new FaixaVariavel("eleat", 132001F, 137000F, 0.8F));
+		dao.incluir(new FaixaVariavel("eleat", 137001F, 142000F, 0.7F));
+		dao.incluir(new FaixaVariavel("eleat", 142001F, 147000F, 0.6F));
+		dao.incluir(new FaixaVariavel("eleat", 147001F, 152000F, 0.5F));
+		dao.incluir(new FaixaVariavel("eleat", 152001F, 157000F, 0.4F));
+		dao.incluir(new FaixaVariavel("eleat", 157001F, 162000F, 0.3F));
+		dao.incluir(new FaixaVariavel("eleat", 162001F, 167000F, 0.2F));
+		dao.incluir(new FaixaVariavel("eleat", 167001F, 9999999F, 0.1F));	
+		
+		dao.incluir(new FaixaVariavel("creleit", 0F, 	 85000F, 0.1F));
+		dao.incluir(new FaixaVariavel("creleit", 85001F, 90000F, 0.2F));
+		dao.incluir(new FaixaVariavel("creleit", 90001F, 95000F, 0.3F));
+		dao.incluir(new FaixaVariavel("creleit", 95001F, 100000F, 0.4F));
+		dao.incluir(new FaixaVariavel("creleit", 100001F,105000F, 0.5F));
+		dao.incluir(new FaixaVariavel("creleit", 105001F,110000F, 0.6F));
+		dao.incluir(new FaixaVariavel("creleit", 110001F,115000F, 0.7F));
+		dao.incluir(new FaixaVariavel("creleit", 115001F,120000F, 0.8F));
+		dao.incluir(new FaixaVariavel("creleit", 120001F,125000F, 0.9F));
+		dao.incluir(new FaixaVariavel("creleit", 125001F,130000F, 1F));
+		dao.incluir(new FaixaVariavel("creleit", 130001F,135000F, 0.9F));
+		dao.incluir(new FaixaVariavel("creleit", 135001F,140000F, 0.8F));
+		dao.incluir(new FaixaVariavel("creleit", 140001F,145000F, 0.7F));
+		dao.incluir(new FaixaVariavel("creleit", 145001F,150000F, 0.6F));
+		dao.incluir(new FaixaVariavel("creleit", 150001F,155000F, 0.5F));
+		dao.incluir(new FaixaVariavel("creleit", 155001F,160000F, 0.4F));
+		dao.incluir(new FaixaVariavel("creleit", 160001F,165000F, 0.3F));
+		dao.incluir(new FaixaVariavel("creleit", 165001F,170000F, 0.2F));
+		dao.incluir(new FaixaVariavel("creleit", 170001F,999999F, 0.1F));
+		
+		dao.incluir(new FaixaVariavel("mov", 0F, 8120F, 	0.1F));
+		dao.incluir(new FaixaVariavel("mov", 8121F, 8170F, 	0.2F));
+		dao.incluir(new FaixaVariavel("mov", 8171F, 8220F, 	0.3F));
+		dao.incluir(new FaixaVariavel("mov", 8221F, 8270F, 	0.4F));
+		dao.incluir(new FaixaVariavel("mov", 8271F, 8320F, 	0.5F));
+		dao.incluir(new FaixaVariavel("mov", 8321F, 8370F, 	0.6F));
+		dao.incluir(new FaixaVariavel("mov", 8371F, 8420F, 	0.7F));
+		dao.incluir(new FaixaVariavel("mov", 8421F, 8470F, 	0.8F));
+		dao.incluir(new FaixaVariavel("mov", 8471F, 8520F, 	0.9F));
+		dao.incluir(new FaixaVariavel("mov", 8521F, 8570F, 	1F));
+		dao.incluir(new FaixaVariavel("mov", 8571F, 8620F, 	0.9F));
+		dao.incluir(new FaixaVariavel("mov", 8621F, 8670F, 	0.8F));
+		dao.incluir(new FaixaVariavel("mov", 8671F, 8720F, 	0.7F));
+		dao.incluir(new FaixaVariavel("mov", 8721F, 8770F, 	0.6F));
+		dao.incluir(new FaixaVariavel("mov", 8771F, 8820F, 	0.5F));
+		dao.incluir(new FaixaVariavel("mov", 8821F, 8870F, 	0.4F));
+		dao.incluir(new FaixaVariavel("mov", 8871F, 8920F, 	0.3F));
+		dao.incluir(new FaixaVariavel("mov", 8921F, 8970F, 	0.2F));
+		dao.incluir(new FaixaVariavel("mov", 8971F, 99999F, 0.1F));
+		System.out.println("registros de faixas de NITEROI carregados");
+	}
+
+	private static void carregarCapital(FaixaVariavelDao dao) {
 		dao.incluir(new FaixaVariavel("eleat", 0F, 49000F, 0.1F));
 		dao.incluir(new FaixaVariavel("eleat", 49001F, 55000F, 0.2F));
 		dao.incluir(new FaixaVariavel("eleat", 55001F, 61000F, 0.3F));
@@ -24,8 +95,6 @@ public class CarregadorDadosBasicosUtil {
 		dao.incluir(new FaixaVariavel("eleat", 97001f, 103000F, 1F));
 		dao.incluir(new FaixaVariavel("eleat", 103001F, 109000F, 0.9F));
 		dao.incluir(new FaixaVariavel("eleat", 109001F, 115000F, 0.8F));
-		dao.incluir(new FaixaVariavel("eleat", 115001F, 121000F, 0.7F));
-		dao.incluir(new FaixaVariavel("eleat", 121001F, 127000F, 0.6F));
 		dao.incluir(new FaixaVariavel("eleat", 115001F, 121000F, 0.7F));
 		dao.incluir(new FaixaVariavel("eleat", 121001F, 127000F, 0.6F));
 		dao.incluir(new FaixaVariavel("eleat", 127001F, 133000F, 0.5F));
@@ -70,18 +139,14 @@ public class CarregadorDadosBasicosUtil {
 		dao.incluir(new FaixaVariavel("mov", 11001F, 11500F, 0.4F));
 		dao.incluir(new FaixaVariavel("mov", 11501F, 12000F, 0.3F));
 		dao.incluir(new FaixaVariavel("mov", 12001F, 12500F, 0.2F));
-		dao.incluir(new FaixaVariavel("mov", 12501F, 9999999F, 0.1F));	
-		
-		em.getTransaction().commit();
-		em.close();
-		System.out.println("registros de faixas inseridos");
-		
+		dao.incluir(new FaixaVariavel("mov", 12501F, 9999999F, 0.1F));
 	}
 	
 	public static void carregarDadosZonas() {
 		EntityManager em = new JPAUtil().getEntityManager();
 		em.getTransaction().begin();
 		ZonaDao dao = new ZonaDao(em);
+		//CAPITAL
 		dao.incluir(new Zona(1,"centro",-22.897049f,-43.189729f,28248,26814,2991));
 		dao.incluir(new Zona(2,"centro",-22.897049f,-43.189729f,49566,50237,3752));
 		dao.incluir(new Zona(3,"flamengo",-22.932629f,-43.179069f,42197,40617,3119));
@@ -179,6 +244,20 @@ public class CarregadorDadosBasicosUtil {
 		dao.incluir(new Zona(245,"campo grande",-22.894698f,-43.559618f,68306,70010,5564));
 		dao.incluir(new Zona(246,"santa cruz",-22.91836f,-43.68567f,96515,109056,9223));
 		dao.incluir(new Zona(252,"copacabana",-22.977707f,-43.192638f,45372,46039,4591));
+		
+		//INTERIOR
+		//NITEROI
+		dao.incluir(new Zona(71	,"NITEROI", 0f, 0f, 45706, 45335, 2603));
+		dao.incluir(new Zona(72	,"NITEROI", 0f, 0f, 50396, 50089, 3485));
+		dao.incluir(new Zona(113,"NITEROI", 0f, 0f, 28035, 27885, 2330));
+		dao.incluir(new Zona(114,"NITEROI", 0f, 0f, 25346, 25180, 1867));
+		dao.incluir(new Zona(115,"NITEROI", 0f, 0f, 30680, 30491, 2152));
+		dao.incluir(new Zona(140,"NITEROI", 0f, 0f, 23600, 23533, 1294));
+		dao.incluir(new Zona(142,"NITEROI", 0f, 0f, 36270, 36046, 2359));
+		dao.incluir(new Zona(143,"NITEROI", 0f, 0f, 31146, 31042, 2061));
+		dao.incluir(new Zona(144,"NITEROI", 0f, 0f, 35331, 35150, 2445));
+		dao.incluir(new Zona(199,"NITEROI", 0f, 0f, 66164, 75826, 5055));
+		
 		em.getTransaction().commit();
 		em.close();
 		System.out.println("registros de zonas inseridos");

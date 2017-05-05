@@ -38,6 +38,7 @@
       		<property name="show_sql" value="true"/>
       		<property name="hibernate.temp.use_jdbc_metadata_defaults" value="false"/>
 			<property name="hibernate.generate_statistics" value="false" />
+			<property name="hibernate.connection.pool_size" value="2" />
 			
 		</properties>
 	</persistence-unit>
