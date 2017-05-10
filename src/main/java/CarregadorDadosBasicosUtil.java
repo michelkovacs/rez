@@ -13,10 +13,10 @@ public class CarregadorDadosBasicosUtil {
 		em.getTransaction().begin();
 		FaixaVariavelDao dao = new FaixaVariavelDao(em);
 		//carregarCapital(dao);	
-		carregarNiteroi(dao);
+		//carregarNiteroi(dao);
 		//carregarBelfordRoxo(dao);
 		//carregarCamposDosGoytacazes(dao);
-		//carregarDuqueDeCaxias(dao);
+		carregarDuqueDeCaxias(dao);
 		//carregarPetropolis(dao);
 		//carregarSaoGoncalo(dao);
 		//carregarNovaIguacu(dao);

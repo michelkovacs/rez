@@ -4,6 +4,7 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -28,6 +29,7 @@ import com.mk.bandas.dao.SolucaoDao;
 import com.mk.bandas.dao.ZonaDao;
 import com.mk.bandas.model.Solucao;
 import com.mk.bandas.model.SolucaoUnica;
+import com.mk.bandas.util.TemplateUtil;
 
 import calculadora.CalculadoraFuncObjetivo;
 import calculadora.CalculadoraVariavelCrEleit;
@@ -258,10 +260,105 @@ public class GeradorDeCombinacoes {
 		}
        	  	       	
        	salvarCSV(solucoesUnicasList, calculadoraFuncObjetivo);
+       	
+       	gerarGraficosComparativos(solucoesUnicasList, calculadoraFuncObjetivo);
        	        
         //rollback
         em.getTransaction().rollback();
 
+	}
+
+	private static void gerarGraficosComparativos(List<Solucao> solucoes,	CalculadoraFuncObjetivo calculadora) {
+		
+		int classificacao = 1;
+		final int maximoComparacoes = 8;
+		String dadosEleat = "";
+		String dadosCrEleit = "";
+		String dadosMov = "";
+		String conteudo = "";
+		int larguraMatriz = 0;
+		MatrizValidacaoHelper matrizValidacaoHelper = new MatrizValidacaoHelper();
+		Table<Integer, String, Float> tabelaDetalhes = HashBasedTable.create();
+		
+		String linhaEleat = "";
+		String linhaCrEleit = "";
+		String linhaMov = "";
+		for (Solucao solucao : solucoes) {
+			if (classificacao > maximoComparacoes) break;
+
+			String matriz[][] = matrizValidacaoHelper.criarMatriz(solucao.getTextoSolucao(), calculadora.getParamsCalculadora().getMaxZonasEmAgrupamento(), calculadora.getParamsCalculadora().getVetorZonas());
+			larguraMatriz = matriz[0].length;
+			
+			try {
+				calculadora.calcular(solucao.getTextoSolucao(), tabelaDetalhes);
+			} catch (Exception e) {
+				System.out.println("erro ao gerar graficos comparativos");
+				e.printStackTrace();
+				return;
+			}
+			
+			for (int i = 0; i < matriz.length; i++) {
+				linhaEleat = "['";
+				linhaCrEleit = "['"; 
+				linhaMov = "['"; 
+				for (int j=0; j< matriz[i].length; j++) {
+					if (NumberUtils.isDigits(matriz[i][j])) {
+						if (j > 0) {
+							linhaEleat = linhaEleat + "-";
+							linhaCrEleit = linhaCrEleit + "-";
+							linhaMov = linhaMov + "-";
+						}
+						linhaEleat = linhaEleat + matriz[i][j];
+						linhaCrEleit = linhaCrEleit + matriz[i][j];
+						linhaMov = linhaMov + matriz[i][j];
+					}
+					
+				}
+				linhaEleat = linhaEleat + "',";
+				linhaEleat = linhaEleat + tabelaDetalhes.row(i).get(CalculadoraVariavelEleat.NOME_COLUNA_SOMA) + "," +
+						classificacao + ",'" + classificacao + "'," + tabelaDetalhes.row(i).get(CalculadoraVariavelEleat.NOME_COLUNA_SOMA) +
+						"],";
+				
+				linhaCrEleit = linhaCrEleit + "',";
+				linhaCrEleit = linhaCrEleit + tabelaDetalhes.row(i).get(CalculadoraVariavelCrEleit.NOME_COLUNA_SOMA) + "," +
+						classificacao + ",'" + classificacao + "'," + tabelaDetalhes.row(i).get(CalculadoraVariavelCrEleit.NOME_COLUNA_SOMA) +
+						"],";
+				
+				linhaMov = linhaMov + "',";
+				linhaMov = linhaMov + tabelaDetalhes.row(i).get(CalculadoraVariavelMov.NOME_COLUNA_SOMA) + "," +
+						classificacao + ",'" + classificacao + "'," + tabelaDetalhes.row(i).get(CalculadoraVariavelMov.NOME_COLUNA_SOMA) +
+						"],";
+				
+				dadosEleat = dadosEleat + linhaEleat + "\n";
+				dadosCrEleit = dadosCrEleit + linhaCrEleit + "\n";
+				dadosMov = dadosMov + linhaMov + "\n";
+			}
+			classificacao++;
+		}
+		
+		HashMap<String, String> parametros = new HashMap<String, String>();
+		parametros.put("DADOS1", dadosEleat);
+		parametros.put("DADOS2", dadosCrEleit);
+		parametros.put("DADOS3", dadosMov);
+		TemplateUtil tplUtil = new TemplateUtil();
+		try {
+			conteudo = tplUtil.processarTemplate("comparativo_grafico.tpl", parametros);
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			System.out.println("\nerro ao gravar arquivo html de comparativos: " + e1.getMessage());
+			e1.printStackTrace();
+		}
+		
+		String nomeArquivo = "rezon-" + DateFormatUtils.format(Calendar.getInstance(), "YYYY-MM-dd--HH-mm-ss") + ".html";
+		final File file = new File(nomeArquivo); 
+		try {
+			org.apache.commons.io.FileUtils.writeStringToFile(file, conteudo, "UTF-8");
+		} catch (IOException e) {
+			System.out.println("\nerro ao gravar arquivo html de comparativos: " + e.getMessage());
+			e.printStackTrace();
+		}
+		System.out.println("\n\nArquivo HTML de graficos comparativos gerado: " + nomeArquivo);
+		
 	}
 
 	private static void salvarCSVSolucaoDigitada(String textoSolucaoParaCalcularPontuacao, CalculadoraFuncObjetivo calculadora) throws Exception {
