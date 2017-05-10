@@ -20,8 +20,15 @@ public class MatrizValidacaoHelper {
 	public String[][] criarMatriz(String textoSolucao, int qtdeMaximaDeFusoes, String[] vetorZonas) {
 		textoSolucao = textoSolucao.replace(CHAR_ENVOLVE_COMBINACAO, "");
 		String[] arrayCombinacoes = textoSolucao.split(DELIMITADOR_COMBINACOES);
-		int largura = arrayCombinacoes.length*qtdeMaximaDeFusoes;
-		int altura = arrayCombinacoes.length*2;
+		int largura = 0; 
+		int altura = 0;
+		if (vetorZonas == null) {
+			largura = arrayCombinacoes.length*(qtdeMaximaDeFusoes+1);
+			altura = arrayCombinacoes.length*2;
+		} else {
+			largura = vetorZonas.length;
+			altura = vetorZonas.length-1;
+		}
 		
 		//inicio com largura bem grande, para caber todos
 		//em uma linha se for necessario

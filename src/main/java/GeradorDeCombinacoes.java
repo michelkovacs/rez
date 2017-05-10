@@ -242,7 +242,7 @@ public class GeradorDeCombinacoes {
         //System.out.println("\n500 SOLUCOES MELHORES CLASSIFICADAS");
         //System.out.println("----------------------------------");
         //listando primeiros colocados na tela
-        List<Solucao> solucoes = solucaoDao.listarPrimeirosColocados(500);
+        List<Solucao> solucoes = solucaoDao.listarPrimeirosColocados(1000);
         //printSolucoes(solucoes);
        	//salvarCSV(solucoes, calculadoraFuncObjetivo);
        	
