@@ -1,4 +1,4 @@
-package com.mk.bandas.tx;
+package br.jus.trerj.rezon.tx;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

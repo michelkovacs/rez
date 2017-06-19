@@ -1,13 +1,13 @@
-package com.mk.bandas.dao;
+package br.jus.trerj.rezon.dao;
 
 import java.io.Serializable;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
-import com.mk.bandas.model.FaixaVariavel;
-import com.mk.bandas.model.Solucao;
-import com.mk.bandas.model.Zona;
+import br.jus.trerj.rezon.model.FaixaVariavel;
+import br.jus.trerj.rezon.model.Solucao;
+import br.jus.trerj.rezon.model.Zona;
 
 public class ZonaDao implements Serializable {
 

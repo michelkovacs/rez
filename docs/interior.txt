@@ -26,7 +26,7 @@ REGIAO: CAMPOS DOS GOYTACAZES
 ---------------------------------------------
 QTDE ZONAS: 7
 QTDE VIZINHAS: 14
-FUSOES: 4
+FUSOES: 3
 ZONAS: 75,76,98,99,100,129,249
 
 VIZINHAS: 
@@ -52,7 +52,7 @@ REGIAO: NOVA IGUACU
 ---------------------------------------------
 QTDE ZONAS: 9
 QTDE VIZINHAS: 17  
-FUSOES: 4
+FUSOES: 3
 
 ZONAS: 
 27,67,82,84,156,157,158,159,250
@@ -80,7 +80,7 @@ REGIAO: SAO GONCALO
 ---------------------------------------------
 QTDE ZONAS: 12
 QTDE VIZINHAS: 21
-FUSOES: 6
+FUSOES: 5
 
 ZONAS: 
 36,68,69,86,87,132,133,134,135,136,137,197
@@ -94,7 +94,7 @@ REGIAO: SAO JOAO DE MERITI
 ---------------------------------------------
 QTDE ZONAS: 6
 QTDE VIZINHAS: 8 
-FUSOES: 3
+FUSOES: 2
 
 ZONAS: 
 46,88,89,145,186,187

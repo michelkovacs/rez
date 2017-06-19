@@ -1,3 +1,4 @@
+package br.jus.trerj.rezon.exec;
 import java.io.File;
 import java.io.IOException;
 import java.text.DecimalFormat;
@@ -23,20 +24,21 @@ import org.paukov.combinatorics.ICombinatoricsVector;
 import com.google.common.base.Strings;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
-import com.mk.bandas.dao.FaixaVariavelDao;
-import com.mk.bandas.dao.JPAUtil;
-import com.mk.bandas.dao.SolucaoDao;
-import com.mk.bandas.dao.ZonaDao;
-import com.mk.bandas.model.Solucao;
-import com.mk.bandas.model.SolucaoUnica;
-import com.mk.bandas.util.TemplateUtil;
 
-import calculadora.CalculadoraFuncObjetivo;
-import calculadora.CalculadoraVariavelCrEleit;
-import calculadora.CalculadoraVariavelEleat;
-import calculadora.CalculadoraVariavelMov;
-import calculadora.MatrizValidacaoHelper;
-import calculadora.ParamsCalculadora;
+import br.jus.trerj.rezon.calculadora.CalculadoraFuncObjetivo;
+import br.jus.trerj.rezon.calculadora.CalculadoraVariavelCrEleit;
+import br.jus.trerj.rezon.calculadora.CalculadoraVariavelEleat;
+import br.jus.trerj.rezon.calculadora.CalculadoraVariavelMov;
+import br.jus.trerj.rezon.calculadora.MatrizValidacaoHelper;
+import br.jus.trerj.rezon.calculadora.ParamsCalculadora;
+import br.jus.trerj.rezon.dao.FaixaVariavelDao;
+import br.jus.trerj.rezon.dao.JPAUtil;
+import br.jus.trerj.rezon.dao.SolucaoDao;
+import br.jus.trerj.rezon.dao.ZonaDao;
+import br.jus.trerj.rezon.model.Solucao;
+import br.jus.trerj.rezon.model.SolucaoUnica;
+import br.jus.trerj.rezon.util.CarregadorDadosBasicosUtil;
+import br.jus.trerj.rezon.util.TemplateUtil;
 
 
 /*** dicas para performance no hiberante 

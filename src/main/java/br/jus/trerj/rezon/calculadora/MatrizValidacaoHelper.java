@@ -1,4 +1,4 @@
-package calculadora;
+package br.jus.trerj.rezon.calculadora;
 import java.util.HashMap;
 
 import org.apache.commons.lang3.StringUtils;

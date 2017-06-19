@@ -1,4 +1,4 @@
-package com.mk.bandas.dao;
+package br.jus.trerj.rezon.dao;
 
 import java.io.Serializable;
 import java.util.List;
@@ -6,7 +6,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
-import com.mk.bandas.model.Solucao;
+import br.jus.trerj.rezon.model.Solucao;
 
 public class SolucaoDao implements Serializable {
 

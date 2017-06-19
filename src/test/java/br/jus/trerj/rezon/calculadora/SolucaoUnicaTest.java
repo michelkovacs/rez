@@ -1,8 +1,9 @@
+package br.jus.trerj.rezon.calculadora;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.mk.bandas.model.Solucao;
-import com.mk.bandas.model.SolucaoUnica;
+import br.jus.trerj.rezon.model.Solucao;
+import br.jus.trerj.rezon.model.SolucaoUnica;
 
 public class SolucaoUnicaTest {
 

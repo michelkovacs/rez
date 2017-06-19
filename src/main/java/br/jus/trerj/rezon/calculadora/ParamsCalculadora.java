@@ -1,7 +1,7 @@
-package calculadora;
+package br.jus.trerj.rezon.calculadora;
 
-import com.mk.bandas.dao.FaixaVariavelDao;
-import com.mk.bandas.dao.ZonaDao;
+import br.jus.trerj.rezon.dao.FaixaVariavelDao;
+import br.jus.trerj.rezon.dao.ZonaDao;
 
 public class ParamsCalculadora {
 

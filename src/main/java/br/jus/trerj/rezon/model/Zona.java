@@ -1,4 +1,4 @@
-package com.mk.bandas.model;
+package br.jus.trerj.rezon.model;
 
 import java.io.Serializable;
 

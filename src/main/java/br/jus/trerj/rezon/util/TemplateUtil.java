@@ -1,4 +1,4 @@
-package com.mk.bandas.util;
+package br.jus.trerj.rezon.util;
 
 import java.io.BufferedReader;
 import java.io.File;

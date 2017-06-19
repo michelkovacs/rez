@@ -1,4 +1,4 @@
-package calculadora;
+package br.jus.trerj.rezon.calculadora;
 import com.google.common.collect.Table;
 
 public class CalculadoraFuncObjetivo {

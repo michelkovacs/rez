@@ -1,14 +1,15 @@
-package calculadora;
+package br.jus.trerj.rezon.calculadora;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.math.NumberUtils;
 
 import com.google.common.collect.Table;
-import com.mk.bandas.dao.FaixaVariavelDao;
-import com.mk.bandas.dao.ZonaDao;
-import com.mk.bandas.model.FaixaVariavel;
-import com.mk.bandas.model.Zona;
+
+import br.jus.trerj.rezon.dao.FaixaVariavelDao;
+import br.jus.trerj.rezon.dao.ZonaDao;
+import br.jus.trerj.rezon.model.FaixaVariavel;
+import br.jus.trerj.rezon.model.Zona;
 
 public class CalculadoraVariavelMov {
 

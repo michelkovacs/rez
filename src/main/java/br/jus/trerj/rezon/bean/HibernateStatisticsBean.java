@@ -1,4 +1,4 @@
-package com.mk.bandas.bean;
+package br.jus.trerj.rezon.bean;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;

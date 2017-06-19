@@ -1,4 +1,4 @@
-package com.mk.bandas.dao;
+package br.jus.trerj.rezon.dao;
 
 import java.io.Serializable;
 
@@ -7,7 +7,7 @@ import javax.persistence.TypedQuery;
 
 import org.hibernate.mapping.List;
 
-import com.mk.bandas.model.FaixaVariavel;
+import br.jus.trerj.rezon.model.FaixaVariavel;
 
 public class FaixaVariavelDao implements Serializable {
 	private static final long serialVersionUID = -7040792643609549890L;

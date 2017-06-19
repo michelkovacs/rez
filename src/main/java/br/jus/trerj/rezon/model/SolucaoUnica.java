@@ -1,10 +1,9 @@
-package com.mk.bandas.model;
+package br.jus.trerj.rezon.model;
 
 import java.util.Arrays;
 
-import com.mk.bandas.tx.GerenciadorDeTransacao;
-
-import calculadora.MatrizValidacaoHelper;
+import br.jus.trerj.rezon.calculadora.MatrizValidacaoHelper;
+import br.jus.trerj.rezon.tx.GerenciadorDeTransacao;
 
 /***
  * @author 104144350310

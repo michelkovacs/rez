@@ -8,9 +8,9 @@
 		
 		<provider>org.hibernate.ejb.HibernatePersistence</provider>
 
-		<class>com.mk.bandas.model.Zona</class>
-		<class>com.mk.bandas.model.FaixaVariavel</class>
-		<class>com.mk.bandas.model.Solucao</class>
+		<class>br.jus.trerj.rezon.model.Zona</class>
+		<class>br.jus.trerj.rezon.model.FaixaVariavel</class>
+		<class>br.jus.trerj.rezon.model.Solucao</class>
 		
 		<properties>
 			<!--  MySQL

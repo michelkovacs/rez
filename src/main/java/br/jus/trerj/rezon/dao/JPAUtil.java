@@ -1,4 +1,4 @@
-package com.mk.bandas.dao;
+package br.jus.trerj.rezon.dao;
 
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.inject.Disposes;

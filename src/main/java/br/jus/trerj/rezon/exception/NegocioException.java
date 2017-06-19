@@ -1,4 +1,4 @@
-package com.mk.bandas.exception;
+package br.jus.trerj.rezon.exception;
 
 public class NegocioException extends Exception {
 

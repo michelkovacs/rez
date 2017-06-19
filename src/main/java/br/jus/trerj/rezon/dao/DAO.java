@@ -1,4 +1,4 @@
-package com.mk.bandas.dao;
+package br.jus.trerj.rezon.dao;
 
 import java.io.Serializable;
 import java.util.List;
